@@ -126,6 +126,9 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
     if (spcfile.good() && datfile.good())
     {
         cout << "The disk: " << diskname.c_str() << "exists and can be written to succesfully" << endl;
+        spcfile.open((this->diskname + ".spc").c_str(),ios::out);
+        spcfile << numberofblocks << " " << blocksize << endl;
+
     }
     else
     {
