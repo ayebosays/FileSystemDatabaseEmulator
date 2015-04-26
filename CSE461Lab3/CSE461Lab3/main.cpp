@@ -4,6 +4,8 @@
  April 25th, 2015
  
  C++ FAT File System Emulation
+ Instantiated the Filesys constructor and sync() member function. Implemented a test in the main paired with the original
+ test for Sdisk.
  
  */
 
@@ -26,7 +28,7 @@ class Sdisk
     int getblock(int blocknumber, string& buffer);
     int putblock(int blocknumber, string buffer);
     int getblocksize() {return blocksize; }                         // Returns the blocksize.
-    int getnumberofblocks() { return numberofblocks; }                 // Returns the number of blocks.
+    int getnumberofblocks() { return numberofblocks; }              // Returns the number of blocks.
     string getfilename() { return diskname; }                       // Returns the disk name.
     
     private :
@@ -114,9 +116,9 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
         cout << "The SPC file " << diskname.c_str() << " was created" << endl;
         cout << "The DAT file " << diskname.c_str() << " was created" << endl;
         
-        for (int i=0; i<numberofblocks*blocksize; i++) // Fills the file with '#' character.
+        for (int i=0; i<numberofblocks*blocksize; i++)
         {
-            datfile.put('#');
+            datfile.put('#');           // Fills the file with '#' character.
         }
     }
     spcfile.close();
@@ -209,7 +211,6 @@ Filesys::Filesys(string diskname): Sdisk(diskname)
         fat.push_back(i+1);
     }
     fssync();
-    
 }
 
 //Derived Class Declaration Stubs
@@ -223,59 +224,49 @@ int Filesys::readblock(string file, int blocknumber, string& buffer){return 0;}
 int Filesys::writeblock(string file, int blocknumber, string buffer){return 0;}
 int Filesys::nextblock(string file, int blocknumber){return 0;}
 
-using namespace std;
-
-
-
- // Blocking cpp.
  vector<string> block(string buffer, int b)
  {
  // blocks the buffer into a list of blocks of size b
- 
- vector<string> blocks;
+     vector<string> blocks;
      
- int numberofblocks=0;
- 
- if (buffer.length() % b == 0)
- { numberofblocks= buffer.length()/b;
- }
- else
- { numberofblocks= buffer.length()/b +1;
- }
- string tempblock;
+     int numberofblocks=0;
      
- for (int i=0; i<numberofblocks; i++)
- { tempblock=buffer.substr(b*i,b);
- blocks.push_back(tempblock);
- }
- int lastblock=blocks.size()-1;
+     if (buffer.length() % b == 0)
+     {
+         numberofblocks= buffer.length()/b;
+     }
+     else
+     {
+         numberofblocks= buffer.length()/b +1;
+     }
+     string tempblock;
+     
+     for (int i=0; i<numberofblocks; i++)
+     {
+         tempblock=buffer.substr(b*i,b);
+         blocks.push_back(tempblock);
+     }
+     int lastblock=blocks.size()-1;
  
- for (int i=blocks[lastblock].length(); i<b; i++)
- { blocks[lastblock]+="#";
- }
- return blocks;
- 
- }
-
-
-
+     for (int i=blocks[lastblock].length(); i<b; i++)
+     {
+         blocks[lastblock]+="#";
+     }
+     return blocks;
+     }
 
 //writes the Root and FAT to the disk.
 //This module writes FAT and ROOT to the sdisk. It should be used every time FAT and ROOT are modified.
 
 int Filesys::fssync()
-
 {
-
     ostringstream fatstream;
     string fatbuffer;
     
     for(int i=0; i<getnumberofblocks(); i++)
     {
-        
         fatstream << fat[i]<<" ";
         fatbuffer = fatstream.str();
-        
     }
     putblock(1, fatbuffer);
     ostringstream outstream;
@@ -288,12 +279,7 @@ int Filesys::fssync()
     }
     putblock(0, buffer); // from the first project
     return 1;
-    
 }
-
-
-
-
 
 
 // Main Instantiation.
@@ -301,7 +287,6 @@ int Filesys::fssync()
 int main()
 {
     Sdisk disk1("disk1",256,128);
-    
     string block1, block2, block3, block4;
     for (int i=1; i<=32; i++) block1=block1+"1";
     for (int i=1; i<=32; i++) block2=block2+"2";
@@ -313,10 +298,6 @@ int main()
     disk1.getblock(8,block4);
     cout << "Should be 32 2s : ";
     cout << block4 << endl;
-    
-    
-    
     Filesys fsys("disk1");
-    
     return 0;
 }
