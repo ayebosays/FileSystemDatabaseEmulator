@@ -10,7 +10,7 @@
  Create function stubs (functions with no code) for the class functions.
  Work first on the Filesys constructor where you have to create the ROOT directory and the FAT.
  Work next on the fssync that writes the Root and FAT to the disk.
- 
+  
  
  #include <string>
  #include <vector>
