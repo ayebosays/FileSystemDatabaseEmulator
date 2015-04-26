@@ -17,7 +17,6 @@
 
 using namespace std;
 
-
 //Sdisk Class
 class Sdisk
 {
@@ -35,8 +34,6 @@ class Sdisk
     int numberofblocks;                                             // number of blocks on disk
     string diskname;                                                // file name of pseudo-disk
     int blocksize;                                                  // block size in bytes/the number of blocks.
-    
-    
 };
 
 // Filesys Class
@@ -56,8 +53,7 @@ public:
     int writeblock(string file, int blocknumber, string buffer);
     int nextblock(string file, int blocknumber);
     vector<string> block(string buffer, int b);
-    
-    
+
     private :
     
     int rootsize;                   // maximum number of entries in ROOT
@@ -67,50 +63,31 @@ public:
     vector<int> fat;                // FAT # of blocks
 };
 
-Sdisk::Sdisk(string disk){
-    
+Sdisk::Sdisk(string disk)
+{
     diskname = disk + ".dat";
-    
     string diskname1 = disk + ".spc";
-    
     ifstream ifile;
     
     if(ifile.good()==true)
-        
     {
-        
         ifile.open(diskname1.c_str());
-        
         ifile>>numberofblocks>>blocksize;
-        
         ifile.close();
         
     }
     
     else
-        
     {
-        
         ifile.close();
-        
         int n,b;
-        
         cout<<"enter number of blocks: ";
-        
         cin>>n;
-        
         cout<<endl<<"enter blocksize: ";
-        
         cin>>b;
-        
         Sdisk::Sdisk(disk,n,b);
-        
     }
-    
-    
-    
 }
-
 
 // Sdisk default constructor
 Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
@@ -118,10 +95,8 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
     this->diskname = diskname;
     this->numberofblocks = numberofblocks;
     this->blocksize = blocksize;
-    
     fstream spcfile;
     fstream datfile;
-    
     spcfile.open((this->diskname + ".spc").c_str(),ios::in | ios::out);
     datfile.open((this->diskname + ".dat").c_str(),ios::in | ios::out);
     
@@ -149,9 +124,7 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
     return;
 }
 
-
 // Get the Block Size. It returns
-
 // an error code of 0 if unsuccessful and a 1 if it is successful.
 int Sdisk::getblock(int blocknumber,string& buffer)
 {
@@ -159,7 +132,6 @@ int Sdisk::getblock(int blocknumber,string& buffer)
     fstream checkfile;
     checkfile.open((this->diskname + ".dat").c_str(), ios::in | ios::out);
     checkfile.seekp(blocksize * blocknumber,ios::beg);
-    
     if (checkfile.bad())
     {
         cout << "Cannot open the file" << endl;
@@ -172,7 +144,6 @@ int Sdisk::getblock(int blocknumber,string& buffer)
             buffer = buffer + y;
         }
         good = 1;
-        
     }
     checkfile.close();
     return good;
@@ -180,9 +151,7 @@ int Sdisk::getblock(int blocknumber,string& buffer)
 
 
 // writes the string buffer to block blocknumber.
-
 // It returns an error code of 1 if successful and
-
 // 1 if it's unsuccessful.
 int Sdisk::putblock(int blocknumber, string buffer)
 {
@@ -198,80 +167,52 @@ int Sdisk::putblock(int blocknumber, string buffer)
         fstream iofile;
         iofile.open((this->diskname + ".dat").c_str());
         iofile.seekp(blocksize * blocknumber,ios::beg);
-        
-        
         for (int i=0; i < blocksize;i++)
         {
             iofile.put(buffer[i]);
             good = 1;
         }
-        
     }
     checkfile.close();
     return good;
 }
 
 Filesys::Filesys(string diskname): Sdisk(diskname)
-
 {
-    
     rootsize=getblocksize()/10;
-    
     fatsize=getnumberofblocks()*5/getblocksize()+1;;
-    
     cout << rootsize << endl << fatsize << endl << getnumberofblocks() << endl << getblocksize() << endl;
     
     for(int i=0; i<rootsize; i++)
-        
     {
-        
         filename.push_back("XXXXX");
-        
     }
     
     for(int i=0; i < rootsize; i++)
-        
     {
-        
         firstblock.push_back(0);
-        
     }
-    
     int k= getnumberofblocks();
-    
     fat.push_back(fatsize);
-    
     int j=0;
     
     while( j < fatsize - 1)
         
     {
-        
         fat.push_back(1);
-        
         j++;
-        
     }
-    
-    
     
     for(int i = fatsize; i < k; i++)
         
     {
-        
         fat.push_back(i+1);
-        
     }
-    
-    
-    
-    //fssync();
+    fssync();
     
 }
 
-
-
-//Derived Class Declarations
+//Derived Class Declaration Stubs
 int Filesys::fsclose() { return 0;}
 int Filesys::newfile(string file){return 0;}
 int Filesys::rmfile(string file){return 0;}
@@ -282,19 +223,17 @@ int Filesys::readblock(string file, int blocknumber, string& buffer){return 0;}
 int Filesys::writeblock(string file, int blocknumber, string buffer){return 0;}
 int Filesys::nextblock(string file, int blocknumber){return 0;}
 
-#include <string>
-#include <vector>
-
 using namespace std;
 
 
-/*
+
  // Blocking cpp.
  vector<string> block(string buffer, int b)
  {
  // blocks the buffer into a list of blocks of size b
  
  vector<string> blocks;
+     
  int numberofblocks=0;
  
  if (buffer.length() % b == 0)
@@ -303,23 +242,21 @@ using namespace std;
  else
  { numberofblocks= buffer.length()/b +1;
  }
- 
  string tempblock;
+     
  for (int i=0; i<numberofblocks; i++)
  { tempblock=buffer.substr(b*i,b);
  blocks.push_back(tempblock);
  }
- 
  int lastblock=blocks.size()-1;
  
  for (int i=blocks[lastblock].length(); i<b; i++)
  { blocks[lastblock]+="#";
  }
- 
  return blocks;
  
  }
- */
+
 
 
 
@@ -329,45 +266,27 @@ using namespace std;
 int Filesys::fssync()
 
 {
-    
-    
-    
+
     ostringstream fatstream;
-    
     string fatbuffer;
     
     for(int i=0; i<getnumberofblocks(); i++)
-        
     {
         
         fatstream << fat[i]<<" ";
-        
         fatbuffer = fatstream.str();
         
     }
-    
     putblock(1, fatbuffer);
-    
-    
-    
     ostringstream outstream;
-    
     string buffer;
     
-    
-    
     for( int i = 0; i < rootsize; ++i )
-        
     {
-        
         outstream << filename[i] << " " << firstblock[i] << " ";
-        
         buffer = outstream.str();
-        
     }
-    
     putblock(0, buffer); // from the first project
-    
     return 1;
     
 }
