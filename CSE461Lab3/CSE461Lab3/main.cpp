@@ -116,7 +116,7 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
         cout << "The SPC file " << diskname.c_str() << " was created" << endl;
         cout << "The DAT file " << diskname.c_str() << " was created" << endl;
         
-        for (int i=0; i<numberofblocks*blocksize; i++)
+        for (int i=0; i<numberofblocks*blocksize; i++) // Fills the file with '#' character.
         {
             datfile.put('#');           // Fills the file with '#' character.
         }
@@ -259,6 +259,7 @@ int Filesys::nextblock(string file, int blocknumber){return 0;}
 //This module writes FAT and ROOT to the sdisk. It should be used every time FAT and ROOT are modified.
 
 int Filesys::fssync()
+
 {
     ostringstream fatstream;
     string fatbuffer;
