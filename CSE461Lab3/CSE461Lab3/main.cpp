@@ -242,6 +242,7 @@ Filesys::Filesys(string diskname): Sdisk(diskname)
 // fsclose() - This module writes FAT and ROOT to the pdisk and sets dirty=0 (closing the pdisk).
 int Filesys::fsclose()
 {
+    fssync();
     return 0;
 }
 
@@ -326,17 +327,20 @@ int Filesys::getfirstblock(string file)
 
 int Filesys::addblock(string file, string block)
 {
+    cout << "start of addblock" << endl;
     int id = getfirstblock(file);
+    /*
     if (id == -1)
     {
         return -1;
         cout << "No such file: " << file;
     }
+     */
     int allocate = fat[0];
     if (allocate == 0)
     {
         cout << "No space available";
-        return -1;
+        return ;
     }
     if (id == 0)
     {
@@ -364,6 +368,7 @@ int Filesys::addblock(string file, string block)
     fat[allocate] = 0;
     fssync(); //sync the root and fat.
     putblock(allocate, block);
+    cout << "end of addblock" << endl;
     return 0;
 }
 
@@ -371,11 +376,25 @@ int Filesys::addblock(string file, string block)
 
 
 
-
+//
 int Filesys::delblock(string file, int blocknumber){return 0;}
+
+
+//
 int Filesys::readblock(string file, int blocknumber, string& buffer){return 0;}
+
+
+//
 int Filesys::writeblock(string file, int blocknumber, string buffer){return 0;}
+
+
+
+//
 int Filesys::nextblock(string file, int blocknumber){return 0;}
+
+
+
+
 
 vector<string> Filesys::block(string buffer, int b)
 {
@@ -453,6 +472,12 @@ int Filesys::fssync()
 }
 
 
+
+
+
+
+
+
 // Main Instantiation.
 
 int main()
@@ -469,6 +494,7 @@ int main()
     vector<string> blocks=fsys.block(bfile,128);
     
     int blocknumber=0;
+    /*
     
      for (int i=0; i<=blocks.size(); i++)
      {
@@ -489,7 +515,7 @@ int main()
      }
      
      fsys.delblock("file2",blocknumber);
-     
+     */
     
 }
 
