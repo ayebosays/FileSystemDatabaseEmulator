@@ -36,6 +36,7 @@ public:
     int readblock(string file, int blocknumber, string& buffer);
     int writeblock(string file, int blocknumber, string buffer);
     int nextblock(string file, int blocknumber);
+    bool checkblock(string file, int blocknumber);
     vector<string> block(string buffer, int b);
     
     private :
@@ -387,6 +388,28 @@ int Filesys::fssync()
 
 
 
+bool Filesys::checkblock(string file, int blocknumber)
+{
+    int blockid = getfirstblock(file);
+    if (blockid == -1)
+    {
+        cout << "File does not exist";
+        return false;
+    }
+    else
+    {
+        while (blockid != 0)
+        {
+            if (blockid == blocknumber)
+            {
+                return true;
+            }
+            blockid = fat[blockid];
+            return false;
+        }
+    }
+    return true;
+}
 
 
 
