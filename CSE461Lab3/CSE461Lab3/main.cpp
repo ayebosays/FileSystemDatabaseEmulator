@@ -329,6 +329,8 @@ int Filesys::addblock(string file, string block)
 {
     cout << "start of addblock" << endl;
     int id = getfirstblock(file);
+    int allocate = fat[0];
+    bool check = false;
     /*
     if (id == -1)
     {
@@ -336,21 +338,29 @@ int Filesys::addblock(string file, string block)
         cout << "No such file: " << file;
     }
      */
-    int allocate = fat[0];
     if (allocate == 0)
     {
         cout << "No space available";
-        return ;
+        return -1;
     }
     if (id == 0)
     {
-        cout << "file is empty";
         for (int i = 0; i < filename.size(); i++)
         {
             if (filename[i] == file)
             {
+                
                 firstblock[i] = allocate;
-            } // file was empty
+                fat[0] = fat[allocate];
+                fat[allocate] = 0;
+                check = true;
+                break;
+            }
+        }
+        if (check == false)
+        {
+            cout << "file is empty";
+            return -2;
         }
     }
     else
@@ -359,6 +369,9 @@ int Filesys::addblock(string file, string block)
         while (fat[nextblock] != 0)
         {
             nextblock = fat[nextblock];
+            fat[nextblock] = allocate;
+            fat[0] = fat[allocate];
+            fat[allocate] = 0;
         }
         fat[nextblock] = allocate;
     }
@@ -369,7 +382,10 @@ int Filesys::addblock(string file, string block)
     fssync(); //sync the root and fat.
     putblock(allocate, block);
     cout << "end of addblock" << endl;
-    return 0;
+    
+    putblock(allocate, block);
+    fssync();
+    return allocate;
 }
 
 
@@ -486,37 +502,45 @@ int main()
     Filesys fsys("disk1");
     fsys.newfile("file1");
     fsys.newfile("file2");
-    string bfile;
+    string bfile1;
+    string bfile2;
+    
     for (int i=1; i<=1024; i++)
     {
-        bfile+="1";
+        bfile1 +="1";
     }
-    vector<string> blocks=fsys.block(bfile,128);
+    vector<string> blocks= fsys.block(bfile1,128);
     
-    int blocknumber=0;
-    /*
+    int blocknumber = 0;
     
-     for (int i=0; i<=blocks.size(); i++)
-     {
-     blocknumber=fsys.addblock("file1",blocks[i]);
-     }
+    cout << "Blocks.size() = " << blocks.size() << endl;
+    
+    for (int i=0; i < blocks.size(); i++)
+    {
+        blocknumber = fsys.addblock("file1",blocks[i]);
+        cout << "i: " << i << endl;
+    }
      
-     
+     /*
      fsys.delblock("file1",fsys.getfirstblock("file1"));
      
      for (int i=1; i<=2048; i++)
      {
-     bfile+="2";
+     bfile2 += "2";
      }
-     
-     for (int i=0; i<=blocks.size(); i++)
+     blocks=block(bfile2,128);
+
+      
+     for (int i=0; i < blocks.size(); i++)
      {
      blocknumber=fsys.addblock("file2",blocks[i]);
      }
      
      fsys.delblock("file2",blocknumber);
      */
+                 
     
 }
-
+                 
+    
 
