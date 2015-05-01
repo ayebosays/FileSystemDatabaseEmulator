@@ -20,8 +20,6 @@
 
 using namespace std;
 
-using namespace std;
-
 //Sdisk Class
 class Sdisk
 {

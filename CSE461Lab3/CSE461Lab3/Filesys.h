@@ -54,7 +54,7 @@ Filesys::Filesys(string diskname): Sdisk(diskname)
 {
     rootsize = getblocksize()/12;
     fatsize = (getnumberofblocks()*5/getblocksize())+1;
-    cout << "rootside: " << rootsize << endl << "fatsize: " << fatsize << endl << "number of blocks: " <<  getnumberofblocks() << endl << getblocksize() << endl;
+    cout << "rootsize: " << rootsize << endl << "fatsize: " << fatsize << endl << "number of blocks: " <<  getnumberofblocks() << endl << "getblocksize(): " << getblocksize() << endl;
     
     
     /*
@@ -164,13 +164,7 @@ int Filesys::rmfile(string file)
 
 
 
-
-
-
-
 // get firstblock - This function returns the block number of the first block in file. It returns the error code of 0 if the file does not exist.
-
-
 int Filesys::getfirstblock(string file)
 {
     for (int i = 0; i < filename.size(); i++)
@@ -191,11 +185,8 @@ int Filesys::getfirstblock(string file)
 
 
 // addblock - This function adds a block of data stored in the string buffer to the end of file F and returns the block number. It returns error code of 1 if successful, 0 if the file does not exist, and returns -1 if there are no available blocks (file system is full!).
-
-
 int Filesys::addblock(string file, string block)
 {
-    cout << "start of addblock" << endl;
     int id = getfirstblock(file);
     int allocate = fat[0];
     bool check = false;
@@ -249,7 +240,6 @@ int Filesys::addblock(string file, string block)
     fat[allocate] = 0;
     fssync(); //sync the root and fat.
     putblock(allocate, block);
-    cout << "end of addblock" << endl;
     
     putblock(allocate, block);
     fssync();
@@ -260,21 +250,61 @@ int Filesys::addblock(string file, string block)
 
 
 
-//
-int Filesys::delblock(string file, int blocknumber){return 0;}
+// The function removes block numbered blocknumber from file and returns an error code of 1 if successful and 0 otherwise.
+int Filesys::delblock(string file, int blocknumber)
+{
+    cout << "delblock is being called" << endl;
+    if (blocknumber == getfirstblock(file))
+    {
+        for (int i = 0; i < filename.size(); i++)
+        {
+            if (filename[i] == file)
+            {
+                firstblock[i] == fat[blocknumber];
+            }
+        }
+    }
+    else
+    {
+        int blockid = getfirstblock(file);
+        while (fat[blockid] != blocknumber)
+        {
+            blockid = fat[blockid];
+        }
+        fat[blockid] = fat[blocknumber];
+    }
+    fat[blocknumber] = fat[0];
+    fat[0] = blocknumber;
+    return 1;
+}
 
 
 //
-int Filesys::readblock(string file, int blocknumber, string& buffer){return 0;}
+int Filesys::readblock(string file, int blocknumber, string& buffer)
+{
+    getblock(blocknumber,buffer);
+    return 1;
+}
 
 
 //
-int Filesys::writeblock(string file, int blocknumber, string buffer){return 0;}
+int Filesys::writeblock(string file, int blocknumber, string buffer)
+{
+    putblock(blocknumber,buffer);
+    return 1;
 
-
+}
 
 //
-int Filesys::nextblock(string file, int blocknumber){return 0;}
+int Filesys::nextblock(string file, int blocknumber)
+{
+    int blockid = getfirstblock(file);
+    while (blockid != blocknumber)
+    {
+        blockid = fat[blockid];
+    }
+    return fat[blockid];
+}
 
 
 

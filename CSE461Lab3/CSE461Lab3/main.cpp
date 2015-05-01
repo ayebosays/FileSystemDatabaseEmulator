@@ -25,7 +25,7 @@ using namespace std;
 // Main Instantiation.
 
 int main()
-{
+{   // (string diskname, int numberofblocks, int blocksize)
     Sdisk disk1("disk1",256,128);
     Filesys fsys("disk1");
     fsys.newfile("file1");
@@ -46,12 +46,13 @@ int main()
     for (int i=0; i < blocks.size(); i++)
     {
         blocknumber = fsys.addblock("file1",blocks[i]);
-        cout << "i: " << i << endl;
     }
      
-     /*
-     fsys.delblock("file1",fsys.getfirstblock("file1"));
-     
+    
+    fsys.delblock("file1",fsys.getfirstblock("file1"));
+    
+    /*
+    
      for (int i=1; i<=2048; i++)
      {
      bfile2 += "2";
