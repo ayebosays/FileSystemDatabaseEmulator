@@ -33,6 +33,8 @@ int main()
     string bfile1;
     string bfile2;
     
+    
+    
     for (int i=1; i<=1024; i++)
     {
         bfile1 +="1";
@@ -51,8 +53,8 @@ int main()
     
     fsys.delblock("file1",fsys.getfirstblock("file1"));
     
-    /*
     
+    /*
      for (int i=1; i<=2048; i++)
      {
      bfile2 += "2";

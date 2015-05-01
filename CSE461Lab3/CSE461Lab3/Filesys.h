@@ -121,17 +121,37 @@ int Filesys::fsclose()
 // firstblock[i] = 0. fssync()
 int Filesys::newfile(string file)
 {
-    for(unsigned int i = 0; i < filename.size(); i++)
+    bool empty = false;
+    
+    for (int i= 0; i < filename.size(); i++)
     {
-        if( filename[i] == "XXXXX")
+        if (filename[i] == file)
         {
-            filename[i] = file;
-            fssync();
+            cout << "File (" << file << ") already exists!" << endl;
             return 1;
         }
     }
-    
-    return 0;
+    for (int i = 0; i < filename.size(); i++)
+    {
+        if( filename[i] == "XXXXX")
+        {
+            
+            empty = true;
+            filename[i] = file;
+            firstblock[i] = 0;
+            break;
+            
+        }
+    }
+        
+    if(empty == false)
+    {
+        cout << "No empty slots in root directory.\n";
+        return 0;
+    }
+    fssync();
+    cout << "Successfully added file: " << file << endl;
+    return 1;
 }
 
 
@@ -168,17 +188,26 @@ int Filesys::rmfile(string file)
 // get firstblock - This function returns the block number of the first block in file. It returns the error code of 0 if the file does not exist.
 int Filesys::getfirstblock(string file)
 {
+    bool found = false;
+    int first_block;
+
+    
     for (int i = 0; i < filename.size(); i++)
     {
         if (filename[i] == file)
         {
-            return firstblock[i];
+            found = true;
+            first_block = firstblock[i];
+            break;
         }
-        
-        cout << "file does not exist: " << file << endl;
+    }
+    if(found == false)
+    {
+        cout << "getFirstBlock(): File was not found!\n";
         return -1;
     }
-    return 0;
+    fssync();
+    return first_block;
 }
 
 
@@ -382,7 +411,7 @@ int Filesys::fssync()
         outstream << filename[i] << " " << firstblock[i] << " ";
         buffer = outstream.str();
     }
-    putblock(1, buffer); // from the first project
+    putblock(1, buffer);
     return 1;
 }
 
