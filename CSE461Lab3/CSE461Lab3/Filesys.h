@@ -387,7 +387,7 @@ int Filesys::fssync()
     
     for(int i=0; i < getnumberofblocks(); i++)
     {
-        fatstream << fat[i]<<" ";
+        fatstream << fat[i]<< " ";
         fatbuffer = fatstream.str();
     }
     
