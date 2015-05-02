@@ -289,7 +289,7 @@ int Filesys::delblock(string file, int blocknumber)
         {
             if (filename[i] == file)
             {
-                firstblock[i] == fat[blocknumber];
+                firstblock[i] = fat[blocknumber];
             }
         }
     }

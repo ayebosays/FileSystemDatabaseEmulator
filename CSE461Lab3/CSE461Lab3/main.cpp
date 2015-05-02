@@ -30,8 +30,10 @@ int main()
     Filesys fsys("disk1");
     
     fsys.newfile("file1");
-    /*
+    
     fsys.newfile("file2");
+    
+    
     string bfile1;
     string bfile2;
     
@@ -54,7 +56,7 @@ int main()
      
     
     fsys.delblock("file1",fsys.getfirstblock("file1"));
-    
+    /*
     
     
      for (int i=1; i<=2048; i++)
