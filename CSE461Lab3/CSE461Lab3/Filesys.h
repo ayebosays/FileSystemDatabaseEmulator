@@ -54,7 +54,7 @@ public:
 Filesys::Filesys(string diskname): Sdisk(diskname)
 {
     rootsize = getblocksize()/12;
-    fatsize = (getnumberofblocks()*5/getblocksize())+1;
+    fatsize = (getnumberofblocks()*5) / (getblocksize())+1;
     cout << "rootsize: " << rootsize << endl << "fatsize: " << fatsize << endl << "number of blocks: " <<  getnumberofblocks() << endl << "getblocksize(): " << getblocksize() << endl;
     
     
@@ -271,7 +271,6 @@ int Filesys::addblock(string file, string block)
     fssync(); //sync the root and fat.
     putblock(allocate, block);
     
-    putblock(allocate, block);
     fssync();
     return allocate;
 }
@@ -309,7 +308,7 @@ int Filesys::delblock(string file, int blocknumber)
 }
 
 
-// gets block numbered blocknumber from file and stores the data in the string buffer. It returns an error code of 1 if successful and 0 otherwise.
+//
 int Filesys::readblock(string file, int blocknumber, string& buffer)
 {
     getblock(blocknumber,buffer);
@@ -317,7 +316,8 @@ int Filesys::readblock(string file, int blocknumber, string& buffer)
 }
 
 
-// writes the buffer to the block numbered blocknumber in file. It returns an appropriate error code.
+//writes the buffer to the block numbered blocknumber in file. It returns an appropriate error code.
+
 int Filesys::writeblock(string file, int blocknumber, string buffer)
 {
     putblock(blocknumber,buffer);
