@@ -50,7 +50,7 @@ public:
     vector<int> fat;                // FAT # of blocks
 };
 
-
+// This constructor reads from the pdisk "disk" and either opens the existing file system on the disk or creates one for an empty disk. Recall the pdisk is a file of characters which we will manipulate as a raw hard disk drive. This file is logically divided up into number_of_blocks many blocks where each block has block_size many characters. Information is first read from block 1 to determine if an existing file system is on the disk. If a filesystem exists, it is opened and made available. Otherwise, the file system is created. The module creates a file system on the pdisk by creating an intial FAT and ROOT. A file system on the disk will have the following segments:
 Filesys::Filesys(string diskname): Sdisk(diskname)
 {
     rootsize = getblocksize()/12;
@@ -309,7 +309,7 @@ int Filesys::delblock(string file, int blocknumber)
 }
 
 
-//
+// gets block numbered blocknumber from file and stores the data in the string buffer. It returns an error code of 1 if successful and 0 otherwise.
 int Filesys::readblock(string file, int blocknumber, string& buffer)
 {
     getblock(blocknumber,buffer);
@@ -317,7 +317,7 @@ int Filesys::readblock(string file, int blocknumber, string& buffer)
 }
 
 
-//
+// writes the buffer to the block numbered blocknumber in file. It returns an appropriate error code.
 int Filesys::writeblock(string file, int blocknumber, string buffer)
 {
     putblock(blocknumber,buffer);
@@ -325,7 +325,8 @@ int Filesys::writeblock(string file, int blocknumber, string buffer)
 
 }
 
-//
+// returns the number of the block that follows blocknumber in file. It will return 0 if blocknumber is the last block and -1 if some other error has occurred (such as file is not in the root directory, or blocknumber is not a block in file.)
+
 int Filesys::nextblock(string file, int blocknumber)
 {
     int blockid = getfirstblock(file);
@@ -346,16 +347,16 @@ vector<string> Filesys::block(string buffer, int b)
     vector<string> blocks;
     
     int numberofblocks = 0;
+    string tempblock;
     
-    if (buffer.length() % b == 0)
+    if (buffer.size() % b == 0)
     {
-        numberofblocks= buffer.length()/b;
+        numberofblocks= buffer.size()/b;
     }
     else
     {
-        numberofblocks= buffer.length()/b +1;
+        numberofblocks= (buffer.size()/b ) +1;
     }
-    string tempblock;
     
     for (int i=0; i<numberofblocks; i++)
     {
@@ -364,7 +365,7 @@ vector<string> Filesys::block(string buffer, int b)
     }
     int lastblock=blocks.size()-1;
     
-    for (int i=blocks[lastblock].length(); i<b; i++)
+    for (int i=blocks[lastblock].size(); i < b; i++)
     {
         blocks[lastblock]+="#";
     }
@@ -403,13 +404,13 @@ int Filesys::fssync()
     // Returns vector<string>
     // write the blocks -> 2 -> fatsize + 1
     
-    ostringstream outstream;
+    ostringstream rootstream;
     string buffer;
     
     for( int i = 0; i < rootsize; ++i )
     {
-        outstream << filename[i] << " " << firstblock[i] << " ";
-        buffer = outstream.str();
+        rootstream << filename[i] << " " << firstblock[i] << " ";
+        buffer = rootstream.str();
     }
     putblock(1, buffer);
     return 1;
