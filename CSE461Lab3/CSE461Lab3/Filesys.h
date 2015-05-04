@@ -282,28 +282,40 @@ int Filesys::addblock(string file, string block)
 // The function removes block numbered blocknumber from file and returns an error code of 1 if successful and 0 otherwise.
 int Filesys::delblock(string file, int blocknumber)
 {
-    cout << "delblock is being called" << endl;
-    if (blocknumber == getfirstblock(file))
+    int first_block = getfirstblock(file);
+    
+    if(checkblock(file,blocknumber) == 0)
     {
-        for (int i = 0; i < filename.size(); i++)
+        return 0;
+    }
+    
+    if(first_block == blocknumber)
+    {
+        for(int i = 0; i < firstblock.size(); i++)
         {
-            if (filename[i] == file)
-            {
+            if(firstblock[i] == blocknumber){
                 firstblock[i] = fat[blocknumber];
+                fat[blocknumber] = fat[0];
+                fat[0] = blocknumber;
+                break;
             }
         }
     }
     else
     {
-        int blockid = getfirstblock(file);
-        while (fat[blockid] != blocknumber)
+        for(int i = 0; i < fat.size();i++)
         {
-            blockid = fat[blockid];
+            if(fat[i] == blocknumber)
+            {
+                fat[i] = fat[blocknumber];
+                fat[blocknumber] = fat[0];
+                fat[0] = blocknumber;
+                break;
+            }
         }
-        fat[blockid] = fat[blocknumber];
     }
-    fat[blocknumber] = fat[0];
-    fat[0] = blocknumber;
+    
+    fssync();
     return 1;
 }
 
