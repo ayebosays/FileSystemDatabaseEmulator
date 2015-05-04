@@ -24,6 +24,7 @@ using namespace std;
 class Sdisk
 {
     public :
+    Sdisk(){}
     Sdisk(string diskname);                                         // Default Constructor
     Sdisk(string diskname, int numberofblocks, int blocksize);
     int getblock(int blocknumber, string& buffer);
@@ -31,9 +32,9 @@ class Sdisk
     int getblocksize() {return blocksize; }                         // Returns the blocksize.
     int getnumberofblocks() { return numberofblocks; }              // Returns the number of blocks.
     string getfilename() { return diskname; }                       // Returns the disk name.
-    
+    friend class Filesys;
+
     private :
-    
     int numberofblocks;                                             // number of blocks on disk
     string diskname;                                                // file name of pseudo-disk
     int blocksize;                                                  // block size in bytes/the number of blocks.
@@ -55,14 +56,12 @@ Sdisk::Sdisk(string disk)
     
     else
     {
-        ifile.close();
-        int n,b;
-        cout<<"enter number of blocks: ";
-        cin>>n;
-        cout<<endl<<"enter blocksize: ";
-        cin>>b;
-        Sdisk::Sdisk(disk,n,b);
+        cout << "Error opening disk, perhaps disk does not exist." << endl;
     }
+    
+    ifile.close();
+    
+    
 }
 
 // Sdisk default constructor
@@ -131,9 +130,23 @@ int Sdisk::getblock(int blocknumber,string& buffer)
 // 1 if it's unsuccessful.
 int Sdisk::putblock(int blocknumber, string buffer)
 {
+    
+    if (buffer.size() > blocksize)
+    {
+        cout << "Error in putblock(). Buffer size is too large!" << endl;
+        return 0;
+    }
+    
+    if(blocknumber > numberofblocks){
+        cout << "Error in putblock(). Block number does not exist!" << endl;
+        return 0;
+    }
+
+    
     bool good = 0;
     fstream checkfile;
     checkfile.open((this->diskname).c_str(), ios::in|ios::out);
+    
     if (checkfile.bad())
     {
         cout << "Cannot open the file" << endl;
