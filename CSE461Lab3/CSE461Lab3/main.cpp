@@ -27,11 +27,11 @@ using namespace std;
 int main()
 {   // (string diskname, int numberofblocks, int blocksize)
     Sdisk disk1("disk1",256,128);
-    Filesys fsys();
+    Filesys fsys(disk1);
 
-    //fsys.newfile("file1");
+    fsys.newfile("disk1");
     
-    //fsys.newfile("file2");
+    fsys.newfile("disk1");
     
     
     string bfile1;
