@@ -25,7 +25,8 @@ class Filesys
 {
 public:
     
-    Filesys(Sdisk);
+    Filesys(Sdisk&);
+    //fsys(string,int,int);
     int fsclose();
     int newfile(string file);
     int rmfile(string file);
@@ -40,7 +41,6 @@ public:
     
     private :
     
-    
     Sdisk disk;
     int fssync();                                                   //writes the Root and FAT to the disk.
     string buffer;
@@ -52,119 +52,41 @@ public:
 };
 
 // This constructor reads from the pdisk "disk" and either opens the existing file system on the disk or creates one for an empty disk. Recall the pdisk is a file of characters which we will manipulate as a raw hard disk drive. This file is logically divided up into number_of_blocks many blocks where each block has block_size many characters. Information is first read from block 1 to determine if an existing file system is on the disk. If a filesystem exists, it is opened and made available. Otherwise, the file system is created. The module creates a file system on the pdisk by creating an intial FAT and ROOT. A file system on the disk will have the following segments:
-Filesys::Filesys(Sdisk disk )
-{
+Filesys::Filesys(Sdisk& sdisk) {
+    this-> disk = sdisk;
+    rootsize = disk.getblocksize()/12;
+    fatsize = (disk.getnumberofblocks()*5) / (disk.getblocksize())+1;
+    cout << "rootsize: " << rootsize << endl << "fatsize: " << fatsize << endl << "number of blocks: " <<  disk.getnumberofblocks() << endl << "getblocksize(): " << disk.getblocksize() << endl;
     
-    
-    disk = disk;
-    bool flag = false;
-    char tmp;
-    string root_blk, file_name;
-    string data = disk.diskname+".dat";
-    int blocksize = disk.getblocksize()-1, i, first_blk, another_tmp;
-    int numberofblocks = disk.getnumberofblocks(), block_size = disk.getblocksize(), tmp2;
-    fatsize = ceil( (numberofblocks * blocksize)/ (8 * blocksize) );
-    
-    tmp2 = 8 + 1 + ceil( log10( disk.getnumberofblocks() ) ) + 1 ;
-    rootsize = (disk.getblocksize() / tmp2) +2;
-    
-    
-    
-    
-    ostringstream output, fat_out;
-    istringstream input, fat_in;
-    
-    ifstream file;
-    file.open(data.c_str());
-    file.seekg(disk.getblocksize()-1);
-    
-    for(int i = disk.getblocksize(); i < (2*disk.getblocksize()); i++)
-    {
-        file.get(tmp);
-        if(tmp != '#')
-        {
-            flag = true;
-            break;
-        }
-    }
-    
-    if(flag == true)
-    { // data was found load fs
-        fstream file((disk.diskname+".dat").c_str());
-        file >> fatsize >> rootsize;
-        //manually getting root block instead of getblock because
-        //i dont want any extra ## in my string.
-        file.seekg(blocksize);
-        for(i = blocksize; i < (2*blocksize); i++)
-        {
-            file.get(tmp);
-            if(tmp == '#')
-                break;
-            output << tmp ;
-        }
-        
-        input.str(output.str());
-        
-        for(i=0; i < rootsize; i++)
-        {
-            input >> file_name >> first_blk;
-            filename.push_back(file_name);
-            firstblock.push_back(first_blk);
-        }
-        
-        //inporting fat vector
-        file.seekg(2*blocksize+1);
-        for(i = 2*blocksize+1; i< ((2+fatsize)*blocksize); i++)
-        {
-            file.get(tmp);
-            if(tmp == '#')
-                break;
-            fat_out << tmp;
-        }
-        
-        fat_in.str( fat_out.str());
-        for(i=0; i < disk.getnumberofblocks(); i++){
-            fat_in >> another_tmp;
-            fat.push_back(another_tmp);
-    }
-        
-    if(flag == false)
-    {
-        //empty disk.
-        //make_fs();
-        fstream file((disk.diskname + ".dat").c_str());
-        file << fatsize << " " << rootsize;
-        file.close();
-        
-        fat.resize(disk.getnumberofblocks(),0);
-        firstblock.resize(rootsize,0);
-        filename.resize(rootsize, "XXXXXX");
-        
-        int ffb = fatsize + 2;
-        fat[0] = ffb;
-        for(int i = 0; i < fat.size()-ffb; i++)
-            fat[ffb + i] = ffb + i + 1;
-        
-        fat[fat.size()-1] = 0;
-        
-        fssync();
-    }
-    
-    file.close();
-}
-
-    
-
-
-
-
     
     /*
-    for (int i=0; i< rootsize; i++)
+     string buffer;
+     getblock(1,buffer);
+     if (buffer[0] == "#")
+     {
+     //add filesystem
+     // build root vectors. filename "XXXXXX", firstblock 0.
+     // build FAT
+     // run fssync - writes the FAT, and Root.
+     }
+     else
+     {
+     //read filesystem
+     // 1. read block 1 containing root.
+     // 2. use istringstream to input filename in first block.
+     // 3. read blocks 2-k (k is Fatsize + 1)
+     // 4. Use istringstream to extract FAT.
+     }
+     */
+    
+    for(int i=0; i<rootsize; i++)
     {
         filename.push_back("XXXXX");
         firstblock.push_back(0);
+        
     }
+    
+    
     int k= disk.getnumberofblocks();
     fat.push_back(fatsize);
     int j=0;
@@ -183,8 +105,6 @@ Filesys::Filesys(Sdisk disk )
     }
     fat[fat.size()-1] = 0;
     fssync();
-    
-    */
 }
 
 
@@ -224,8 +144,8 @@ int Filesys::newfile(string file)
             
         }
     }
-        
-    if(empty == false)
+    
+    if(!empty)
     {
         cout << "No empty slots in root directory.\n";
         return 0;
@@ -270,8 +190,8 @@ int Filesys::rmfile(string file)
 int Filesys::getfirstblock(string file)
 {
     bool found = false;
-    int first_block;
-
+    int first_block = 0;
+    
     
     for (int i = 0; i < filename.size(); i++)
     {
@@ -282,7 +202,7 @@ int Filesys::getfirstblock(string file)
             break;
         }
     }
-    if(found == false)
+    if(!found)
     {
         cout << "getFirstBlock(): File was not found!\n";
         return -1;
@@ -327,7 +247,7 @@ int Filesys::addblock(string file, string block)
                 break;
             }
         }
-        if (check == false)
+        if (!check)
         {
             cout << "file is empty";
             return -2;
@@ -358,39 +278,25 @@ int Filesys::addblock(string file, string block)
 
 
 
+
+
 // The function removes block numbered blocknumber from file and returns an error code of 1 if successful and 0 otherwise.
 int Filesys::delblock(string file, int blocknumber)
 {
     int first_block = getfirstblock(file);
-    
+    cout << "called delete block" << endl;
     if(checkblock(file,blocknumber) == 0)
     {
         return 0;
     }
-    
-    if(first_block == blocknumber)
+    for(int i = 0; i < fat.size();i++)
     {
-        for(int i = 0; i < firstblock.size(); i++)
+        if(fat[i] == blocknumber)
         {
-            if(firstblock[i] == blocknumber){
-                firstblock[i] = fat[blocknumber];
-                fat[blocknumber] = fat[0];
-                fat[0] = blocknumber;
-                break;
-            }
-        }
-    }
-    else
-    {
-        for(int i = 0; i < fat.size();i++)
-        {
-            if(fat[i] == blocknumber)
-            {
-                fat[i] = fat[blocknumber];
-                fat[blocknumber] = fat[0];
-                fat[0] = blocknumber;
-                break;
-            }
+            fat[i] = fat[blocknumber];
+            fat[blocknumber] = fat[0];
+            fat[0] = blocknumber;
+            break;
         }
     }
     
@@ -413,7 +319,7 @@ int Filesys::writeblock(string file, int blocknumber, string buffer)
 {
     disk.putblock(blocknumber,buffer);
     return 1;
-
+    
 }
 
 // returns the number of the block that follows blocknumber in file. It will return 0 if blocknumber is the last block and -1 if some other error has occurred (such as file is not in the root directory, or blocknumber is not a block in file.)
@@ -442,21 +348,21 @@ vector<string> Filesys::block(string buffer, int b)
     
     if (buffer.size() % b == 0)
     {
-        numberofblocks= buffer.size()/b;
+        numberofblocks = (int) (buffer.size()/b);
     }
     else
     {
-        numberofblocks= (buffer.size()/b ) +1;
+        numberofblocks = (int) ((buffer.size()/b ) +1);
     }
     
     for (int i=0; i<numberofblocks; i++)
     {
-        tempblock=buffer.substr(b*i,b);
+        tempblock=buffer.substr((unsigned long) (b*i), (unsigned long) b);
         blocks.push_back(tempblock);
     }
-    int lastblock=blocks.size()-1;
+    int lastblock= (int) (blocks.size()-1);
     
-    for (int i=blocks[lastblock].size(); i < b; i++)
+    for (int i= (int) blocks[lastblock].size(); i < b; i++)
     {
         blocks[lastblock]+="#";
     }
@@ -469,15 +375,13 @@ vector<string> Filesys::block(string buffer, int b)
 
 int Filesys::fssync()
 {
+    
     // FAT
     // Uses ostringstream to write root vectors filename, firstblock -> buffer.
     // block the buffer -> write to block1 of Sdisk.
     
     ostringstream fatstream;
-    ostringstream rootstream;
-
     string fatbuffer;
-    /*
     
     for(int i=0; i < disk.getnumberofblocks(); i++)
     {
@@ -499,6 +403,7 @@ int Filesys::fssync()
     // write the blocks -> 2 -> fatsize + 1
     
     ostringstream rootstream;
+    string buffer;
     
     for( int i = 0; i < rootsize; ++i )
     {
@@ -506,38 +411,7 @@ int Filesys::fssync()
         buffer = rootstream.str();
     }
     disk.putblock(1, buffer);
-    return 1;
-    
-    
-    */
-    
-    
-    
-    
-    
-    
-    for(int i=0; i < filename.size(); i++)
-        rootstream << filename[i] << " " << firstblock[i] << " ";
-    
-    for(int i=0; i < fat.size();i++)
-        fatstream << fat[i] << " ";
-    
-    string buffer = fatstream.str();
-    vector<string> blocks =  block(buffer, disk.getblocksize());
-    
-    for(int i =0; i < blocks.size();i++)
-        disk.putblock(2+i, blocks[i]);
-    
-    buffer.clear();
-    blocks.clear();
-    
-    buffer = rootstream.str();
-    blocks = block(buffer, disk.getblocksize());
-    
-    for(int i = 0; i < blocks.size(); i++)
-        disk.putblock(1+i, blocks[i]);
     return 0;
-
 }
 
 

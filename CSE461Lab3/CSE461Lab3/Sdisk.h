@@ -24,7 +24,8 @@ using namespace std;
 class Sdisk
 {
     public :
-    Sdisk(){}
+    Sdisk() { }
+    
     Sdisk(string diskname);                                         // Default Constructor
     Sdisk(string diskname, int numberofblocks, int blocksize);
     int getblock(int blocknumber, string& buffer);
@@ -32,60 +33,61 @@ class Sdisk
     int getblocksize() {return blocksize; }                         // Returns the blocksize.
     int getnumberofblocks() { return numberofblocks; }              // Returns the number of blocks.
     string getfilename() { return diskname; }                       // Returns the disk name.
-    friend class Filesys;
-
+    
     private :
+    
     int numberofblocks;                                             // number of blocks on disk
     string diskname;                                                // file name of pseudo-disk
+    string diskname1;
     int blocksize;                                                  // block size in bytes/the number of blocks.
 };
 
 Sdisk::Sdisk(string disk)
 {
     diskname = disk + ".dat";
-    string diskname1 = disk + ".spc";
-    ifstream ifile;
+    diskname1 = disk + ".spc";
+    ifstream ifile(diskname1.c_str());
     
-    if(ifile.good()==true)
+    if(ifile.is_open())
     {
-        ifile.open(diskname1.c_str());
         ifile>>numberofblocks>>blocksize;
         ifile.close();
-        
     }
     
     else
     {
-        cout << "Error opening disk, perhaps disk does not exist." << endl;
+        ifile.close();
+        int n,b;
+        cout<<"enter number of blocks: ";
+        cin>>n;
+        cout<<endl<<"enter blocksize: ";
+        cin>>b;
+        Sdisk(disk,n,b);
     }
-    
-    ifile.close();
-    
-    
 }
 
 // Sdisk default constructor
-Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
+Sdisk::Sdisk(string disk, int numberofblocks, int blocksize)
 {
-    this->diskname = diskname;
+    this->diskname = disk + ".dat";
+    this->diskname1 = disk + ".spc";
     this->numberofblocks = numberofblocks;
     this->blocksize = blocksize;
     fstream spcfile;
     fstream datfile;
-    spcfile.open((this->diskname + ".spc").c_str(),ios::in | ios::out);
-    datfile.open((this->diskname + ".dat").c_str(),ios::in | ios::out);
-
+    spcfile.open((this->diskname1).c_str(),ios::in | ios::out);
+    datfile.open((this->diskname).c_str(),ios::in | ios::out);
+    
     if (spcfile.good() && datfile.good())
     {
         cout << "The disk named: " << diskname.c_str() << " exists and is now ready to be written to." << endl;
-        datfile >> numberofblocks >> blocksize;
     }
     else // .spc/.dat file creation.
     {
         cout << "The disk: " << diskname.c_str() << "could not be found. " << endl;
         cout << "Both the SPC and DAT file were not found. Creating both now. Please wait...." << endl;
-        spcfile.open((this->diskname + ".spc").c_str(),ios::out);
-        datfile.open((this->diskname + ".dat").c_str(),ios::out);
+        spcfile.open((this->diskname1).c_str(),ios::out);
+        datfile.open((this->diskname).c_str(),ios::out);
         spcfile << numberofblocks << " " << blocksize;
         cout << "The SPC file " << diskname.c_str() << " was created" << endl;
         cout << "The DAT file " << diskname.c_str() << " was created" << endl;
@@ -94,11 +96,6 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
         {
             datfile.put('#');           // Fills the file with '#' character.
         }
-    }
-    
-    for (int i=0; i<numberofblocks*blocksize; i++)
-    {
-        datfile.put('#');           // Fills the file with '#' character.
     }
     spcfile.close();
     datfile.close();
@@ -111,7 +108,7 @@ int Sdisk::getblock(int blocknumber,string& buffer)
 {
     bool good = 0;
     fstream checkfile;
-    checkfile.open((this->diskname + ".dat").c_str(), ios::in | ios::out);
+    checkfile.open((this->diskname).c_str(), ios::in | ios::out);
     checkfile.seekp(blocksize * blocknumber,ios::beg);
     if (checkfile.bad())
     {
@@ -121,7 +118,7 @@ int Sdisk::getblock(int blocknumber,string& buffer)
     {
         for (int i = 0; i < blocksize;i++)
         {
-            char y = checkfile.get();
+            char y = (char) checkfile.get();
             buffer = buffer + y;
         }
         good = 1;
@@ -136,29 +133,9 @@ int Sdisk::getblock(int blocknumber,string& buffer)
 // 1 if it's unsuccessful.
 int Sdisk::putblock(int blocknumber, string buffer)
 {
-    
-    if (buffer.size() > blocksize)
-    {
-        cout << "Error in putblock(). Buffer size is too large!" << endl;
-        return 0;
-    }
-    
-    if(blocknumber > numberofblocks){
-        cout << "Error in putblock(). Block number does not exist!" << endl;
-        return 0;
-    }
-
-    
     bool good = 0;
     fstream checkfile;
     checkfile.open((this->diskname).c_str(), ios::in|ios::out);
-    checkfile.seekp(blocknumber*blocksize-1);
-    for(int i = 0; i < buffer.size(); i++)
-    {
-        checkfile << buffer[i];
-    }
-    checkfile.close();
-    
     if (checkfile.bad())
     {
         cout << "Cannot open the file" << endl;
@@ -167,6 +144,7 @@ int Sdisk::putblock(int blocknumber, string buffer)
     {
         fstream iofile;
         iofile.open((this->diskname).c_str());
+        iofile.seekp(blocksize * blocknumber,ios::beg);
         for (int i=0; i < blocksize;i++)
         {
             iofile.put(buffer[i]);
