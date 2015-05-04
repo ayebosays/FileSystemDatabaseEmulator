@@ -31,7 +31,7 @@ int main()
 
     fsys.newfile("disk1");
     
-    fsys.newfile("disk1");
+    fsys.newfile("disk3");
     
     
     string bfile1;

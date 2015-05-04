@@ -159,7 +159,7 @@ Filesys::Filesys(Sdisk disk )
 
 
     
-    //
+    /*
     for (int i=0; i< rootsize; i++)
     {
         filename.push_back("XXXXX");
@@ -183,6 +183,8 @@ Filesys::Filesys(Sdisk disk )
     }
     fat[fat.size()-1] = 0;
     fssync();
+    
+    */
 }
 
 
@@ -472,7 +474,10 @@ int Filesys::fssync()
     // block the buffer -> write to block1 of Sdisk.
     
     ostringstream fatstream;
+    ostringstream rootstream;
+
     string fatbuffer;
+    /*
     
     for(int i=0; i < disk.getnumberofblocks(); i++)
     {
@@ -494,7 +499,6 @@ int Filesys::fssync()
     // write the blocks -> 2 -> fatsize + 1
     
     ostringstream rootstream;
-    string buffer;
     
     for( int i = 0; i < rootsize; ++i )
     {
@@ -503,6 +507,37 @@ int Filesys::fssync()
     }
     disk.putblock(1, buffer);
     return 1;
+    
+    
+    */
+    
+    
+    
+    
+    
+    
+    for(int i=0; i < filename.size(); i++)
+        rootstream << filename[i] << " " << firstblock[i] << " ";
+    
+    for(int i=0; i < fat.size();i++)
+        fatstream << fat[i] << " ";
+    
+    string buffer = fatstream.str();
+    vector<string> blocks =  block(buffer, disk.getblocksize());
+    
+    for(int i =0; i < blocks.size();i++)
+        disk.putblock(2+i, blocks[i]);
+    
+    buffer.clear();
+    blocks.clear();
+    
+    buffer = rootstream.str();
+    blocks = block(buffer, disk.getblocksize());
+    
+    for(int i = 0; i < blocks.size(); i++)
+        disk.putblock(1+i, blocks[i]);
+    return 0;
+
 }
 
 

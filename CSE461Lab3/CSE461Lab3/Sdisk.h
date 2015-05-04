@@ -74,10 +74,11 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
     fstream datfile;
     spcfile.open((this->diskname + ".spc").c_str(),ios::in | ios::out);
     datfile.open((this->diskname + ".dat").c_str(),ios::in | ios::out);
-    
+
     if (spcfile.good() && datfile.good())
     {
         cout << "The disk named: " << diskname.c_str() << " exists and is now ready to be written to." << endl;
+        datfile >> numberofblocks >> blocksize;
     }
     else // .spc/.dat file creation.
     {
@@ -93,6 +94,11 @@ Sdisk::Sdisk(string diskname, int numberofblocks, int blocksize)
         {
             datfile.put('#');           // Fills the file with '#' character.
         }
+    }
+    
+    for (int i=0; i<numberofblocks*blocksize; i++)
+    {
+        datfile.put('#');           // Fills the file with '#' character.
     }
     spcfile.close();
     datfile.close();
@@ -146,6 +152,12 @@ int Sdisk::putblock(int blocknumber, string buffer)
     bool good = 0;
     fstream checkfile;
     checkfile.open((this->diskname).c_str(), ios::in|ios::out);
+    checkfile.seekp(blocknumber*blocksize-1);
+    for(int i = 0; i < buffer.size(); i++)
+    {
+        checkfile << buffer[i];
+    }
+    checkfile.close();
     
     if (checkfile.bad())
     {
@@ -155,7 +167,6 @@ int Sdisk::putblock(int blocknumber, string buffer)
     {
         fstream iofile;
         iofile.open((this->diskname).c_str());
-        iofile.seekp(blocksize * blocknumber,ios::beg);
         for (int i=0; i < blocksize;i++)
         {
             iofile.put(buffer[i]);
