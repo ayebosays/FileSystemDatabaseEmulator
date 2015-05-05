@@ -55,15 +55,17 @@ int main()
     }
     
     
+    
+    
     fsys.delblock("file1",fsys.getfirstblock("file1"));
-    /*
+    
      
      
      for (int i=1; i<=2048; i++)
      {
      bfile2 += "2";
      }
-     blocks=block(bfile2,128);
+     blocks=fsys.block(bfile2,128);
      
      
      for (int i=0; i < blocks.size(); i++)
@@ -72,7 +74,7 @@ int main()
      }
      
      fsys.delblock("file2",blocknumber);
-     */
+    
     
     
 }

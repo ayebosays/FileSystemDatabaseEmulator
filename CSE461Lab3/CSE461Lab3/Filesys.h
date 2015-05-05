@@ -221,16 +221,11 @@ int Filesys::addblock(string file, string block)
     int id = getfirstblock(file);
     int allocate = fat[0];
     bool check = false;
-    /*
-     if (id == -1)
-     {
-     return -1;
-     cout << "No such file: " << file;
-     }
-     */
+
+     
     if (allocate == 0)
     {
-        cout << "No space available";
+        cout << "No space available" << endl;
         return -1;
     }
     if (id == 0)
@@ -244,6 +239,7 @@ int Filesys::addblock(string file, string block)
                 fat[0] = fat[allocate];
                 fat[allocate] = 0;
                 check = true;
+                cout << "addblock" << endl;
                 break;
             }
         }
@@ -284,7 +280,6 @@ int Filesys::addblock(string file, string block)
 int Filesys::delblock(string file, int blocknumber)
 {
     int first_block = getfirstblock(file);
-    cout << "called delete block" << endl;
     if(checkblock(file,blocknumber) == 0)
     {
         return 0;
