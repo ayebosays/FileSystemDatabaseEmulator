@@ -52,7 +52,8 @@ public:
 };
 
 // This constructor reads from the pdisk "disk" and either opens the existing file system on the disk or creates one for an empty disk. Recall the pdisk is a file of characters which we will manipulate as a raw hard disk drive. This file is logically divided up into number_of_blocks many blocks where each block has block_size many characters. Information is first read from block 1 to determine if an existing file system is on the disk. If a filesystem exists, it is opened and made available. Otherwise, the file system is created. The module creates a file system on the pdisk by creating an intial FAT and ROOT. A file system on the disk will have the following segments:
-Filesys::Filesys(Sdisk& sdisk) {
+Filesys::Filesys(Sdisk& sdisk)
+{
     this-> disk = sdisk;
     rootsize = disk.getblocksize()/12;
     fatsize = (disk.getnumberofblocks()*5) / (disk.getblocksize())+1;
@@ -81,29 +82,28 @@ Filesys::Filesys(Sdisk& sdisk) {
     
     for(int i=0; i<rootsize; i++)
     {
-        filename.push_back("XXXXX");
+        filename.push_back("XXXXXX");
         firstblock.push_back(0);
-        
     }
     
     
     int k= disk.getnumberofblocks();
-    fat.push_back(fatsize);
-    int j=0;
+    fat.push_back(fatsize + 2);
+
     
-    while( j < fatsize - 1)
-        
+    for (int i = 0; i <= fatsize; i++)
     {
         fat.push_back(0);
-        j++;
+        
     }
     
-    for(int i = fatsize; i < k; i++)
+    for(int i = fatsize + 2; i < k; i++)
         
     {
         fat.push_back(i+1);
     }
     fat[fat.size()-1] = 0;
+    
     fssync();
 }
 
@@ -134,7 +134,7 @@ int Filesys::newfile(string file)
     }
     for (int i = 0; i < filename.size(); i++)
     {
-        if( filename[i] == "XXXXX")
+        if( filename[i] == "XXXXXX")
         {
             
             empty = true;
@@ -176,7 +176,7 @@ int Filesys::rmfile(string file)
             if(filename[i]==file)
             {
                 cout << "filename rmfile" << endl;
-                filename[i]="XXXXX";
+                filename[i]="XXXXXX";
             }
         }
     }
@@ -268,7 +268,6 @@ int Filesys::addblock(string file, string block)
     fssync(); //sync the root and fat.
     disk.putblock(allocate, block);
     
-    fssync();
     return allocate;
 }
 
@@ -378,7 +377,7 @@ int Filesys::fssync()
     ostringstream fatstream;
     string fatbuffer;
     
-    for(int i=0; i < disk.getnumberofblocks(); i++)
+    for(int i = 0; i < disk.getnumberofblocks(); i++)
     {
         fatstream << fat[i]<< " ";
         fatbuffer = fatstream.str();
@@ -389,7 +388,7 @@ int Filesys::fssync()
     for (int i=0; i < blockbuff.size(); i++)
     {
         
-        disk.putblock(2+i, blockbuff[i]);
+        disk.putblock(2 + i, blockbuff[i]);
     }
     
     // Root

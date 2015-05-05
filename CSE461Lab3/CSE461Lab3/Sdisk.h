@@ -142,12 +142,12 @@ int Sdisk::putblock(int blocknumber, string buffer)
     }
     else
     {
-        fstream iofile;
-        iofile.open((this->diskname).c_str());
-        iofile.seekp(blocksize * blocknumber,ios::beg);
-        for (int i=0; i < blocksize;i++)
+        //fstream iofile;
+        //iofile.open((this->diskname).c_str());
+        checkfile.seekp(blocksize * blocknumber,ios::beg);
+        for (int i=0; i < buffer.size() ;i++)
         {
-            iofile.put(buffer[i]);
+            checkfile.put(buffer[i]);
             good = 1;
         }
     }
