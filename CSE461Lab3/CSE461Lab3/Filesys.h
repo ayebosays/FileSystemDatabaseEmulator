@@ -255,16 +255,12 @@ int Filesys::addblock(string file, string block)
         while (fat[nextblock] != 0)
         {
             nextblock = fat[nextblock];
-            fat[nextblock] = allocate;
-            fat[0] = fat[allocate];
-            fat[allocate] = 0;
         }
         fat[nextblock] = allocate;
+        fat[0] = fat[allocate];
+        fat[allocate] = 0;
     }
     
-    
-    fat[0] = fat[fat[0]];
-    fat[allocate] = 0;
     fssync(); //sync the root and fat.
     disk.putblock(allocate, block);
     
@@ -283,6 +279,19 @@ int Filesys::delblock(string file, int blocknumber)
     {
         return 0;
     }
+    for (int i = 0; i < filename.size(); i++)
+    {
+        if(firstblock[i] == blocknumber)
+        {
+            firstblock[i] = fat[blocknumber];
+            fat[blocknumber] = fat[0];
+            fat[0] = blocknumber;
+            
+            fssync();
+            return 1;
+        }
+    }
+    
     for(int i = 0; i < fat.size();i++)
     {
         if(fat[i] == blocknumber)
@@ -293,6 +302,7 @@ int Filesys::delblock(string file, int blocknumber)
             break;
         }
     }
+    
     
     fssync();
     return 1;

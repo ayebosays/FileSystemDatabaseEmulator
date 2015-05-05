@@ -34,7 +34,7 @@ int main()
     string bfile1;
     string bfile2;
     
-    for (int i=1; i<=128; i++)
+    for (int i=1; i<=1024; i++)
     {
         bfile1 +="1";
     }
@@ -49,12 +49,17 @@ int main()
         blocknumber = fsys.addblock("file1",blocks[i]);
     }
     
+    
+    
     fsys.delblock("file1",fsys.getfirstblock("file1"));
-     
-    for (int i=1; i<=128; i++)
+    
+    
+    
+    for (int i=1; i<=256; i++)
     {
          bfile2 += "2";
     }
+    
     blocks=fsys.block(bfile2,128);
      
      
@@ -64,7 +69,8 @@ int main()
     }
      
     fsys.delblock("file2",blocknumber);
-     
+    
+    
 }
 
 
