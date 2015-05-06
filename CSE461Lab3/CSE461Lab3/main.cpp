@@ -27,10 +27,8 @@ int main()
 {   // (string diskname, int numberofblocks, int blocksize)
     Sdisk disk1("disk1",256,128);
     Filesys fsys(disk1);
-    
     fsys.newfile("file1");
     fsys.newfile("file2");
-    
     string bfile1;
     string bfile2;
     
@@ -48,13 +46,9 @@ int main()
     {
         blocknumber = fsys.addblock("file1",blocks[i]);
     }
-    
-    
-    
+
     fsys.delblock("file1",fsys.getfirstblock("file1"));
-    
-    
-    
+
     for (int i=1; i<=256; i++)
     {
          bfile2 += "2";
