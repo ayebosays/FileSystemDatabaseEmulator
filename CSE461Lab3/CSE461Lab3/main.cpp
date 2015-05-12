@@ -10,6 +10,7 @@
  */
 #include "Filesys.h"
 #include "Sdisk.h"
+#include "Shell.h"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -63,6 +64,7 @@ int main()
     }
      
     fsys.delblock("file2",blocknumber);
+    fsys.rmfile("file1");
     
     
 }

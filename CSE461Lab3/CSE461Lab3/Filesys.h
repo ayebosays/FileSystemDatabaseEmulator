@@ -37,10 +37,11 @@ public:
     int nextblock(string file, int blocknumber);
     bool checkblock(string file, int blocknumber);
     vector<string> block(string buffer, int b);
-    
+    Sdisk disk;
+    friend class Shell;
+
     private :
     
-    Sdisk disk;
     int fssync();                   //writes the Root and FAT to the disk.
     string buffer;
     int rootsize;                   // maximum number of entries in ROOT
@@ -137,10 +138,11 @@ int Filesys::newfile(string file)
 // This function removes the entry file from ROOT if the file is empty (first block is 0). It returns error codes of 1 if successful and 0 otherwise (not empty or file does not exist).
 int Filesys::rmfile(string file)
 {
-    int x=getfirstblock(file);
+    int x= getfirstblock(file);
+
     if(x != 0)
     {
-        cout << "rmfile " << endl;
+        cout << "File could not be removed. " << endl;
         return 0;
     }
     else
@@ -209,7 +211,6 @@ int Filesys::addblock(string file, string block)
                 fat[0] = fat[allocate];
                 fat[allocate] = 0;
                 check = true;
-                cout << "addblock" << endl;
                 break;
             }
         }
