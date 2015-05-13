@@ -16,7 +16,7 @@
 class Shell: public Filesys
 {
     public:
-        Shell(string diskname);
+        Shell();
         int dir();// lists all files
         int add(string file);// add a new file using input from the keyboard
         int del(string file);// deletes the file
@@ -34,7 +34,7 @@ class Shell: public Filesys
 */
 
 // Creates the shell
-Shell::Shell(string diskname): Filesys(disk)
+Shell::Shell(): Filesys(disk)
 {
     cout << "Shell" << endl;
     

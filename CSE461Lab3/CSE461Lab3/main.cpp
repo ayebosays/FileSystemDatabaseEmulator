@@ -28,7 +28,7 @@ int main()
 {   // (string diskname, int numberofblocks, int blocksize)
     Sdisk disk1("disk1",256,128);
     Filesys fsys(disk1);
-    
+    Shell();
 }
 
 
