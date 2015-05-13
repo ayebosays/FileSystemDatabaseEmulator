@@ -33,6 +33,8 @@ class Sdisk
     int getblocksize() {return blocksize; }                         // Returns the blocksize.
     int getnumberofblocks() { return numberofblocks; }              // Returns the number of blocks.
     string getfilename() { return diskname; }                       // Returns the disk name.
+    friend class Shell;
+    friend class Filesys;
     
     private :
     
@@ -56,13 +58,7 @@ Sdisk::Sdisk(string disk)
     
     else
     {
-        ifile.close();
-        int n,b;
-        cout<<"enter number of blocks: ";
-        cin>>n;
-        cout<<endl<<"enter blocksize: ";
-        cin>>b;
-        Sdisk(disk,n,b);
+        cout << "Was unable to open the file" << endl;
     }
 }
 

@@ -16,7 +16,7 @@
 class Shell: public Filesys
 {
     public:
-        Shell(string filename, int blocksize, int numberofblocks);
+        Shell(string diskname);
         int dir();// lists all files
         int add(string file);// add a new file using input from the keyboard
         int del(string file);// deletes the file
@@ -34,12 +34,11 @@ class Shell: public Filesys
 */
 
 // Creates the shell
-Shell::Shell(string filename, int blocksize, int numberofblocks): Filesys::Filesys(disk)
+Shell::Shell(string diskname): Filesys(disk)
 {
+    cout << "Shell" << endl;
     
-
-    
-}
+} // Should pass the parameters to Filesys to build the filesystem.
 
 
 
@@ -64,7 +63,8 @@ int Shell::dir()                // lists all the files
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
     newfile(file);
-    //addblock(file, block);
+    int block = getfirstblock(file);
+    addblock(file, buffer);
     return 1;
 }
 
@@ -78,6 +78,7 @@ int Shell::del(string file)    // deletes the file
 
 int Shell::type(string file)   //lists the contents of file
 {
+    
     return 1;
 }
 
