@@ -52,7 +52,7 @@ Sdisk::Sdisk(string disk)
     
     if(ifile.is_open())
     {
-        ifile>>numberofblocks>>blocksize;
+        ifile >> numberofblocks >> blocksize;
         ifile.close();
     }
     
