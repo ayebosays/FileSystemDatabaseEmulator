@@ -16,13 +16,12 @@
 class Shell: public Filesys
 {
     public:
-        Shell();
-        int dir();// lists all files
-        int add(string file);// add a new file using input from the keyboard
-        int del(string file);// deletes the file
-        int type(string file);//lists the contents of file
+        Shell();                // creates the file system.
+        int dir();              // call ls which lists all files
+        int add(string file);   // add a new file using input from the keyboard.
+        int del(string file);   // deletes the file
+        int type(string file);  //lists the contents of file
         int copy(string file1, string file2);//copies file1 to file2
-    friend class Filesys;
 };
 
 /*
@@ -36,6 +35,7 @@ class Shell: public Filesys
 // Creates the shell
 Shell::Shell(): Filesys(disk)
 {
+    
     cout << "Shell" << endl;
     
 } // Should pass the parameters to Filesys to build the filesystem.
@@ -59,23 +59,32 @@ int Shell::dir()                // lists all the files
     
 }
 
-
+// read in data from keyboard. getline...endl. create file.
+// new file. getline. block it up with addblock.
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
     newfile(file);
     int block = getfirstblock(file);
-    addblock(file, buffer);
+    //addblock(file, block);
     return 1;
 }
 
+
+// delete the blocks, delete the file.
 int Shell::del(string file)    // deletes the file
 {
+    int block = getfirstblock(file);
+    while (block > 0)
+    {
+        delblock(file, block);
+        block = getfirstblock(file);
+    }
     rmfile(file);
-    //delblock(file, block);
     return 1;
 }
 
 
+// cat function from before the midterm.
 int Shell::type(string file)   //lists the contents of file
 {
     
@@ -83,6 +92,7 @@ int Shell::type(string file)   //lists the contents of file
 }
 
 
+// was on the midterm....
 int Shell::copy(string file1, string file2) //copies file1 to file2
 {
     int block = getfirstblock(file1);
