@@ -13,39 +13,24 @@
 #include <string>
 #include <iostream>
 
-class Shell: public Sdisk
+class Shell: public Filesys
 {
     public:
-    Shell(string filename, int blocksize, int numberofblocks):Sdisk(diskname,numberofblocks,blocksize) {Sdisk(filename,blocksize,numberofblocks); };                // creates the file system.
+    Shell(string filename):Filesys(filename)
+    {
+        this->file_name = filename;
+        Filesys(file_name);
+    };
         int dir();              // call ls which lists all files
         int add(string file);   // add a new file using input from the keyboard.
         int del(string file);   // deletes the file
         int type(string file);  //lists the contents of file
         int copy(string file1, string file2);//copies file1 to file2
-    Sdisk disk1;
-    
-    friend class Sdisk;
-    friend class Filesys;
+        string filename;
+        string file_name;
+        friend class Sdisk;
+        friend class Filesys;
 };
-
-/*
- Create function stubs (functions with no code) for the class functions.
- Work first on the constructor that creates the Shell.
- Work on the add function which creates a file.
- Work on the del function which deletes the file.
- Work on the type function which displays the content of the file.
-
-// Creates the shell
-Shell::Shell(string filename, int blocksize, int numberofblocks): Filesys(disk)
-{
-    Sdisk& sdisk;
-    Filesys(sdisk);
-
-}; // Should pass the parameters to Filesys to build the filesystem.
-*/
-
-
-
 
 
 int Shell::dir()                // lists all the files
@@ -67,11 +52,10 @@ int Shell::dir()                // lists all the files
 // new file. getline. block it up with addblock.
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
-    /*
+    
     newfile(file);
-    //int block = getfirstblock(file);
+    int block = getfirstblock(file);
     //addblock(file, block);
-     */
     return 1;
      
 }
@@ -80,7 +64,7 @@ int Shell::add(string file)     // add a new file using input from the keyboard
 // delete the blocks, delete the file.
 int Shell::del(string file)    // deletes the file
 {
-    /*
+    
     int block = getfirstblock(file);
     while (block > 0)
     {
@@ -88,7 +72,7 @@ int Shell::del(string file)    // deletes the file
         block = getfirstblock(file);
     }
     rmfile(file);
-     */
+    
     return 1;
 }
 
@@ -104,7 +88,7 @@ int Shell::type(string file)   //lists the contents of file
 // was on the midterm....
 int Shell::copy(string file1, string file2) //copies file1 to file2
 {
-    /*
+    
     int block = getfirstblock(file1);
     int block2 = getfirstblock(file2);
     string buffer;
@@ -115,7 +99,7 @@ int Shell::copy(string file1, string file2) //copies file1 to file2
         block = nextblock(file1, block);
     }
     writeblock(file2, block2, buffer);
-     */
+    
     return 1;
 }
 

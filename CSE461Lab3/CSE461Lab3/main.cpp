@@ -31,7 +31,7 @@ int main()
     //It inputs commands as : command op1 op2
     //You should modify it to work for your implementation.
     //
-    Shell("disk",256,128);
+    Shell("disk");
     string s;
     string command="go";
     string op1,op2;

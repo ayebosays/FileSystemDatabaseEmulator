@@ -8,7 +8,8 @@
 
 #ifndef CSE461Lab3_Sdisk_h
 #define CSE461Lab3_Sdisk_h
-#include "Filesys.h"
+#include "Sdisk.h"
+
 #include<iostream>
 #include <string>
 #include <fstream>
