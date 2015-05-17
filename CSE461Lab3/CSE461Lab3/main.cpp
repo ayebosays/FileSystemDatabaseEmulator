@@ -39,9 +39,11 @@ int main()
     string s;
     string command="go";
     string op1,op2;
+    Shell shll;
     
     while (command != "quit")
     {
+        
         command.clear();
         op1.clear();
         op2.clear();
@@ -58,19 +60,21 @@ int main()
         if (command=="dir")
         {
             cout << "dir" << endl;
-            
+            shll.dir();
             // use the ls function
             
         }
         if (command=="add")
         {
             // The variable op1 is the new file
-            cout << "add" << endl;
+            cout << "What is the file you wish to add?:";
+            shll.add(op1);
             
         }
         if (command=="del")
         {
             cout << "del" << endl;
+            shll.del(op1);
             // The variable op1 is the file
         }
         if (command=="type")
@@ -81,6 +85,7 @@ int main()
         if (command=="copy")
         {
             cout << "copy" << endl;
+            shll.copy(op1,op2);
             // The variable op1 is the source file and the variable op2 is the destination file.
         }
         if (command=="exit")

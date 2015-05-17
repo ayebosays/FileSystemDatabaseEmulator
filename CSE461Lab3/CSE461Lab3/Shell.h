@@ -30,6 +30,7 @@ public:
         this-> filesys = Filesys();
         filesys.start(Sdisk(filename));
     };
+    Shell();
     int dir();              // call ls which lists all files
     int add(string file);   // add a new file using input from the keyboard.
     int del(string file);   // deletes the file
@@ -56,6 +57,11 @@ int Shell::dir()                // lists all the files
     
 }
 
+Shell::Shell()
+{
+    
+}
+
 // read in data from keyboard. getline...endl. create file.
 // new file. getline. block it up with addblock.
 int Shell::add(string file)     // add a new file using input from the keyboard
@@ -63,7 +69,7 @@ int Shell::add(string file)     // add a new file using input from the keyboard
     
     filesys.newfile(file);
     int block = filesys.getfirstblock(file);
-    //addblock(file, block);
+    //filesys.addblock(file, block);
     return 1;
     
 }
