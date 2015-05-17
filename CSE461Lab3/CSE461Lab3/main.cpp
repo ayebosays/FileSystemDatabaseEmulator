@@ -31,7 +31,11 @@ int main()
     //It inputs commands as : command op1 op2
     //You should modify it to work for your implementation.
     //
-    Shell("disk");
+    string filename = "disk";
+    int blocksize = 128;
+    int numberofblocks = 256;
+    
+    Shell(filename, blocksize, numberofblocks);
     string s;
     string command="go";
     string op1,op2;

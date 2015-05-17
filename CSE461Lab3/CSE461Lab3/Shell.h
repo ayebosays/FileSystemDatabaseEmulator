@@ -8,36 +8,44 @@
 
 #ifndef CSE461Lab3_Shell_h
 #define CSE461Lab3_Shell_h
-#include "Sdisk.h"
+
 #include "Filesys.h"
+#include "Sdisk.h"
 #include <string>
+#include <fstream>
 #include <iostream>
+#include <vector>
+#include <sstream>
+#include <string>
+#include <cmath>
 
-class Shell: public Filesys
+using namespace std;
+
+class Shell
 {
-    public:
-    Shell(string filename):Filesys(filename)
+public:
+    Shell(string filename, int blocksize, int numberofblocks)
     {
-        this->file_name = filename;
-        Filesys(file_name);
+        // Sdisk disk(filename);
+        this-> filesys = Filesys();
+        filesys.start(Sdisk(filename));
     };
-        int dir();              // call ls which lists all files
-        int add(string file);   // add a new file using input from the keyboard.
-        int del(string file);   // deletes the file
-        int type(string file);  //lists the contents of file
-        int copy(string file1, string file2);//copies file1 to file2
-        string filename;
-        string file_name;
-        friend class Sdisk;
-        friend class Filesys;
+    int dir();              // call ls which lists all files
+    int add(string file);   // add a new file using input from the keyboard.
+    int del(string file);   // deletes the file
+    int type(string file);  //lists the contents of file
+    int copy(string file1, string file2);//copies file1 to file2
+    string filename;
+    string file_name;
+    Sdisk disk;
+    Filesys filesys;
 };
-
 
 int Shell::dir()                // lists all the files
 {
     // dir lists files in the class Shell
     // Prototype: int Shell::dir()
-
+    
     vector<string> flist;
     
     for (int i = 0; i < flist.size(); i++)
@@ -53,11 +61,11 @@ int Shell::dir()                // lists all the files
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
     
-    newfile(file);
-    int block = getfirstblock(file);
+    filesys.newfile(file);
+    int block = filesys.getfirstblock(file);
     //addblock(file, block);
     return 1;
-     
+    
 }
 
 
@@ -65,13 +73,13 @@ int Shell::add(string file)     // add a new file using input from the keyboard
 int Shell::del(string file)    // deletes the file
 {
     
-    int block = getfirstblock(file);
+    int block = filesys.getfirstblock(file);
     while (block > 0)
     {
-        delblock(file, block);
-        block = getfirstblock(file);
+        filesys.delblock(file, block);
+        block = filesys.getfirstblock(file);
     }
-    rmfile(file);
+    filesys.rmfile(file);
     
     return 1;
 }
@@ -89,16 +97,16 @@ int Shell::type(string file)   //lists the contents of file
 int Shell::copy(string file1, string file2) //copies file1 to file2
 {
     
-    int block = getfirstblock(file1);
-    int block2 = getfirstblock(file2);
+    int block = filesys.getfirstblock(file1);
+    int block2 = filesys.getfirstblock(file2);
     string buffer;
     while(block != 0)
     {
         string tmp;
         buffer += tmp;
-        block = nextblock(file1, block);
+        block = filesys.nextblock(file1, block);
     }
-    writeblock(file2, block2, buffer);
+    filesys.writeblock(file2, block2, buffer);
     
     return 1;
 }
