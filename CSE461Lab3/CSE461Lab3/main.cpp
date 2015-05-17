@@ -67,24 +67,21 @@ int main()
         if (command=="add")
         {
             // The variable op1 is the new file
-            cout << "What is the file you wish to add?:";
             shll.add(op1);
             
         }
         if (command=="del")
         {
-            cout << "del" << endl;
             shll.del(op1);
             // The variable op1 is the file
         }
         if (command=="type")
         {
-            cout << "type" << endl;
             // The variable op1 is the file
+            shll.type(op1);
         }
         if (command=="copy")
         {
-            cout << "copy" << endl;
             shll.copy(op1,op2);
             // The variable op1 is the source file and the variable op2 is the destination file.
         }
