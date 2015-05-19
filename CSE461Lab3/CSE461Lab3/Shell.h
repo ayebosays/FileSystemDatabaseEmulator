@@ -128,6 +128,7 @@ int Shell::type(string file)   //lists the contents of file
 int Shell::copy(string file1, string file2) //copies file1 to file2
 {
     del(file2); // clears out file2.
+    filesys.newfile(file2);
     int currentblock = filesys.getfirstblock(file1);
     if (currentblock == -1)
     {
@@ -140,9 +141,7 @@ int Shell::copy(string file1, string file2) //copies file1 to file2
         filesys.readblock(file1, currentblock, buffer);
         filesys.addblock(file2, buffer);
         currentblock = filesys.nextblock(file1, currentblock);
-        
     }
-
     return 1;
 }
 
