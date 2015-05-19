@@ -39,10 +39,10 @@ public:
     bool checkblock(string file, int blocknumber);
     vector<string> block(string buffer, int b);
     Sdisk disk;
+    vector<string> ls();
     friend class Shell;
     
     private :
-    
     int fssync();                   //writes the Root and FAT to the disk.
     string buffer;
     int rootsize;                   // maximum number of entries in ROOT
@@ -405,7 +405,18 @@ bool Filesys::checkblock(string file, int blocknumber)
 }
 
 
-
+vector<string> Filesys::ls()
+{
+    vector<string> filelist;
+    for(int i = 0; i < filename.size(); ++i)
+    {
+        if (filename[i] != "XXXXXX")
+        {
+            filelist.push_back(filename[i]);
+        }
+    }
+    return filelist;
+}
 
 
 #endif

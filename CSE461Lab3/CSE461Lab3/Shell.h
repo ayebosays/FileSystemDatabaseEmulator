@@ -44,7 +44,7 @@ public:
 
 int Shell::dir()
 {
-    vector<string> flist;
+    vector<string> flist = filesys.ls();
     for (int i = 0; i < flist.size(); i++)
     {
         cout << flist[i] << endl;
@@ -61,6 +61,13 @@ Shell::Shell()
 // new file. getline. block it up with addblock.
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
+    int err = filesys.newfile(file);
+    
+    if (err == -1)
+    {
+        return -1;
+    }
+    
     string contains;
     int blocknumber =0;
     cout << "Input file contents: " << endl;
@@ -74,30 +81,24 @@ int Shell::add(string file)     // add a new file using input from the keyboard
         blocknumber = filesys.addblock(file, blocks[i]);
     }
     
-    
-    filesys.newfile(file);
-    int block = filesys.getfirstblock(file);
-    //filesys.addblock(file, block);
     return 1;
     
 }
-
 
 // delete the blocks, delete the file.
 int Shell::del(string file)    // deletes the file
 {
     
-    int block = filesys.getfirstblock(file);
-    while (block > 0)
+    int currentblock = filesys.getfirstblock(file);
+    while (currentblock > 0)
     {
-        filesys.delblock(file, block);
-        block = filesys.getfirstblock(file);
+        filesys.delblock(file, currentblock);
+        currentblock = filesys.getfirstblock(file);
     }
     filesys.rmfile(file);
     
     return 1;
 }
-
 
 // cat function from before the midterm.
 int Shell::type(string file)   //lists the contents of file
@@ -122,7 +123,6 @@ int Shell::type(string file)   //lists the contents of file
     
     return 1;
 }
-
 
 // was on the midterm....
 int Shell::copy(string file1, string file2) //copies file1 to file2

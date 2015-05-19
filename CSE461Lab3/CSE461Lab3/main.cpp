@@ -52,7 +52,6 @@ int main()
             op2=s.substr(secondblank+1);
         if (command=="dir")
         {
-            cout << "dir" << endl;
             shll.dir();
         }
         if (command=="add")
@@ -62,17 +61,14 @@ int main()
         if (command=="del")
         {
             shll.del(op1);
-            // The variable op1 is the file
         }
         if (command=="type")
         {
-            // The variable op1 is the file
             shll.type(op1);
         }
         if (command=="copy")
         {
             shll.copy(op1,op2);
-            // The variable op1 is the source file and the variable op2 is the destination file.
         }
         if (command=="exit")
         {
