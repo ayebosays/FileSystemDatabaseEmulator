@@ -25,25 +25,18 @@ using namespace std;
 // Main Instantiation.
 
 int main()
-{   // (string diskname, int numberofblocks, int blocksize)
-    //
-    //This main program inputs commands to the shell.
-    //It inputs commands as : command op1 op2
-    //You should modify it to work for your implementation.
-    //
+{
     string filename = "disk";
     int blocksize = 128;
     int numberofblocks = 256;
     
-    Shell(filename, blocksize, numberofblocks);
+    Shell shll(filename, blocksize, numberofblocks);
     string s;
     string command="go";
     string op1,op2;
-    Shell shll;
     
     while (command != "quit")
     {
-        
         command.clear();
         op1.clear();
         op2.clear();
@@ -61,14 +54,10 @@ int main()
         {
             cout << "dir" << endl;
             shll.dir();
-            // use the ls function
-            
         }
         if (command=="add")
         {
-            // The variable op1 is the new file
             shll.add(op1);
-            
         }
         if (command=="del")
         {

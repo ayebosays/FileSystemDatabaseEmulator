@@ -51,7 +51,7 @@ Sdisk::Sdisk(string disk)
     diskname1 = disk + ".spc";
     ifstream ifile(diskname1.c_str());
     
-    if(ifile.is_open())
+    if(ifile.good())
     {
         ifile >> numberofblocks >> blocksize;
         ifile.close();
@@ -59,7 +59,7 @@ Sdisk::Sdisk(string disk)
     
     else
     {
-        cout << "Was unable to open the file" << endl;
+        cout << "Was unable to open the file" << diskname.c_str() <<endl;
     }
 }
 

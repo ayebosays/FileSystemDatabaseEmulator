@@ -26,7 +26,7 @@ class Shell
 public:
     Shell(string filename, int blocksize, int numberofblocks)
     {
-        // Sdisk disk(filename);
+        Sdisk disk(filename, numberofblocks, blocksize);
         this-> filesys = Filesys();
         filesys.start(Sdisk(filename));
     };
@@ -42,19 +42,14 @@ public:
     Filesys filesys;
 };
 
-int Shell::dir()                // lists all the files
+int Shell::dir()
 {
-    // dir lists files in the class Shell
-    // Prototype: int Shell::dir()
-    
     vector<string> flist;
-    
     for (int i = 0; i < flist.size(); i++)
     {
         cout << flist[i] << endl;
     }
     return 1;
-    
 }
 
 Shell::Shell()
@@ -66,6 +61,19 @@ Shell::Shell()
 // new file. getline. block it up with addblock.
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
+    string contains;
+    int blocknumber =0;
+    cout << "Input file contents: " << endl;
+    
+    getline(cin,contains);
+    
+    vector<string> blocks = filesys.block(contains, 128);
+    
+    for(int i =0; i < blocks.size(); i++)
+    {
+        blocknumber = filesys.addblock(file, blocks[i]);
+    }
+    
     
     filesys.newfile(file);
     int block = filesys.getfirstblock(file);
@@ -94,6 +102,23 @@ int Shell::del(string file)    // deletes the file
 // cat function from before the midterm.
 int Shell::type(string file)   //lists the contents of file
 {
+    int currentblock = filesys.getfirstblock(file);
+    while(currentblock > 0)
+    {
+        string buffer;
+        filesys.readblock(file, currentblock, buffer);
+        currentblock = filesys.nextblock(file, currentblock);
+        
+        if(currentblock == 0)
+        {
+            while(buffer.back() == '#')
+            {
+                buffer = buffer.substr(0,buffer.length() - 1);
+            }
+            cout << buffer;
+        }
+        cout << endl;
+    }
     
     return 1;
 }
@@ -102,18 +127,22 @@ int Shell::type(string file)   //lists the contents of file
 // was on the midterm....
 int Shell::copy(string file1, string file2) //copies file1 to file2
 {
-    
-    int block = filesys.getfirstblock(file1);
-    int block2 = filesys.getfirstblock(file2);
-    string buffer;
-    while(block != 0)
+    del(file2); // clears out file2.
+    int currentblock = filesys.getfirstblock(file1);
+    if (currentblock == -1)
     {
-        string tmp;
-        buffer += tmp;
-        block = filesys.nextblock(file1, block);
+        return 0;
     }
-    filesys.writeblock(file2, block2, buffer);
     
+    while(currentblock > 0)
+    {
+        string buffer;
+        filesys.readblock(file1, currentblock, buffer);
+        filesys.addblock(file2, buffer);
+        currentblock = filesys.nextblock(file1, currentblock);
+        
+    }
+
     return 1;
 }
 

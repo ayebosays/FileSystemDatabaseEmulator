@@ -52,13 +52,13 @@ public:
     vector<int> fat;                // FAT # of blocks
 };
 
-// This constructor reads from the pdisk "disk" and either opens the existing file system on the disk or creates one for an empty disk. Recall the pdisk is a file of characters which we will manipulate as a raw hard disk drive. This file is logically divided up into number_of_blocks many blocks where each block has block_size many characters. Information is first read from block 1 to determine if an existing file system is on the disk. If a filesystem exists, it is opened and made available. Otherwise, the file system is created. The module creates a file system on the pdisk by creating an intial FAT and ROOT. A file system on the disk will have the following segments:
+
 void Filesys::start(Sdisk sdisk)
 {
     this-> disk = sdisk;
     rootsize = disk.getblocksize()/12;
     fatsize = (disk.getnumberofblocks()*5) / (disk.getblocksize())+1;
-    cout << "rootsize: " << rootsize << endl << "fatsize: " << fatsize << endl << "number of blocks: " <<  disk.getnumberofblocks() << endl << "getblocksize(): " << disk.getblocksize() << endl;
+    
     
     for(int i=0; i<rootsize; i++)
     {
@@ -66,7 +66,7 @@ void Filesys::start(Sdisk sdisk)
         firstblock.push_back(0);
     }
     
-    int k= disk.getnumberofblocks();
+    int k = disk.getnumberofblocks();
     fat.push_back(fatsize + 2);
     
     for (int i = 0; i <= fatsize; i++)
