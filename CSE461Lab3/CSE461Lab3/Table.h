@@ -34,4 +34,15 @@ int Table::Build_Table
     return 0;
 }
 
+int Table::Search
+{
+    return 0;
+}
+
+int Table::IndexSearch(string value)
+{
+    return 0;
+}
+
+
 #endif /* defined(__CSE461Lab3__Table__) */
