@@ -29,5 +29,9 @@ class Table: public Filesys
 
 
 
+int Table::Build_Table
+{
+    return 0;
+}
 
 #endif /* defined(__CSE461Lab3__Table__) */
