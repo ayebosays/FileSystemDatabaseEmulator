@@ -27,7 +27,10 @@ class Table: public Filesys
         int IndexSearch(string value);
 };
 
-
+Table::Table(string diskname, string flatfile, string indexfile)
+{
+    return 0;
+}
 
 int Table::Build_Table
 {
