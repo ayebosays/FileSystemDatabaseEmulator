@@ -8,22 +8,28 @@
 
 #ifndef __CSE461Lab3__Table__
 #define __CSE461Lab3__Table__
-#include "Filesys"
 #include <stdio.h>
 #include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <iostream>
+
 using namespace std;
 
-class Table: public Filesys
+class Table
 {
     public :
-        Table(string diskname, string flatfile, string indexfile);
+        Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile);
         int Build_Table(string input_file);
         int Search(string value);
+        Sdisk disk;
+        Filesys filesystem;
+
     private :
         string flatfile;
         string indexfile;
         int numberofrecords;
-        Filesys filesystem;
         int IndexSearch(string value);
 };
 
@@ -32,41 +38,64 @@ class Table: public Filesys
 
 //This constructor creates the table object. It creates the new (empty) files flatfile and indexfile in the file system on the Sdisk using diskname.
 
-Table::Table(string diskname, string flatfile, string indexfile)
+Table::Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile)
 {
-    fs = diskname;
-    flat_file = flatfile;
-    index_file = indexfile;
-    fs -> newfile(flat_file);
-    fs -> newfile(index_file);
-    return 1;
+    Sdisk disk(diskname, numberofblocks, blocksize);
+    this->filesystem = Filesys();
+    filesystem.start(Sdisk(diskname));
+    
+    this->indexfile = indexfile;
+    this->flatfile = flatfile;
+    filesystem.newfile(flatfile);
+    filesystem.newfile(indexfile);
+    
 }
 
 
 //This module will read records from the input file (the raw data file described above), add the records to the flatfile and create index records consisting of the date and block number, and then add the index records to the index file. (Note that index records will have 10 bytes .. 5 bytes for the date and 5 bytes for the block number.)
 
-int Table::Build_Table
+int Table::Build_Table(string input_file)
 {
-    string block, record, date;
-    int blk_num;
-    vector<string> blocks, keys;
-    vector<int> links;
-    stringstream ss;
-    ifstream file(in_file.c_str());
+    vector<int> iblock;
+    vector<string> ikey;
+    ifstream infile;
+    infile.open(input_file.c_str());
+    string rec;
+    getline(infile,rec);
     
-    if (!file.good())
+    if (!infile.good())
     {
         cout << "Was not able to build the table" << endl;
         return -1;
     }
-        
-    getline(file, record);
-    blk_num = fs -> addblock(flatfile, record);
     
-        getline(file, record);
-        blk_num = fs -> addblock(flatfile, record);
-        
-        
+    while (infile.good())
+    {
+        string primkey = rec.substr(0,5); // Starting at position 0, 5 characters.
+        vector<string> blocks = filesystem.block(rec, disk.getblocksize());
+        int blockid = filesystem.addblock(flatfile, blocks[0]);
+        ikey.push_back(primkey);
+        iblock.push_back(blockid);
+        getline(infile,rec);
+        if(infile.bad() && ikey.size() > 0)
+        {
+            // write a block to the index file.
+            ostringstream ibuffer;
+            for(int i = 0; i < ikey.size(); i++)
+            {
+                ibuffer << ikey[i] << " " << iblock[i] << " ";
+            }
+            string buffer = ibuffer.str();
+            vector<string> blocks2 = filesystem.block(buffer, disk.getblocksize());
+            int error = filesystem.addblock(indexfile,blocks2[0]);
+            ikey.clear();
+            iblock.clear();
+        }
+    }
+    
+    
+    
+   
     
     return 1;
 }
@@ -75,7 +104,7 @@ int Table::Build_Table
         
 // This module accepts a key value, and searches the index file with a call to IndexSearch for the record where the date matches the specified value. IndexSearch returns the blocknumber of the block in the flat file where the target record is located. This block should then be read and the record displayed.
 
-int Table::Search
+int Table::Search(string value)
 {
     string buffer, date, end, place, type, ref, desc;
     vector <string> record;
@@ -86,7 +115,8 @@ int Table::Search
         cout << "The record could not be found. " << endl;
         return -1;
     }
-    Filesys -> getblock(flatfile,block_number,buffer);
+    Filesys fs;
+    fs.getfirstblock(flatfile);
     
     
     cout << "Record found: " << endl;
@@ -95,7 +125,7 @@ int Table::Search
     cout << "Type: " << record.at(2) << endl;
     cout << "Place: " << record.at(3) << endl;
     cout << "Reference: " << record.at(4) << endl;
-    cout << "Description: " << record.at(5) <<< endl;
+    cout << "Description: " << record.at(5) << endl;
     
     return 1;
 }

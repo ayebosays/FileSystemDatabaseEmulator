@@ -11,6 +11,7 @@
 #include "Filesys.h"
 #include "Sdisk.h"
 #include "Shell.h"
+#include "Table.h"
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -26,6 +27,25 @@ using namespace std;
 
 int main()
 {
+    string filename = "disk";
+    int blocksize = 128;
+    int numberofblocks = 256;
+    string indexfile, flatfile;
+    
+
+    Table TBL(filename, blocksize, numberofblocks,flatfile,indexfile);
+
+    
+    TBL.Build_Table(filename);
+    while(true)
+    {
+        cout << "Input date: ";
+        string date;
+        cin >> date;
+        TBL.Search(date);
+    }
+    
+    /*
     string filename = "disk";
     int blocksize = 128;
     int numberofblocks = 256;
@@ -77,6 +97,8 @@ int main()
         }
         
     }
+     
+     */
     
     return 0;
 }

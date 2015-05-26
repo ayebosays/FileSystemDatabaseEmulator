@@ -41,6 +41,7 @@ public:
     Sdisk disk;
     vector<string> ls();
     friend class Shell;
+    friend class Table;
     
     private :
     int fssync();                   //writes the Root and FAT to the disk.
@@ -240,7 +241,7 @@ int Filesys::addblock(string file, string block)
 // The function removes block numbered blocknumber from file and returns an error code of 1 if successful and 0 otherwise.
 int Filesys::delblock(string file, int blocknumber)
 {
-    int first_block = getfirstblock(file);
+    //int first_block = getfirstblock(file);
     if(checkblock(file,blocknumber) == 0)
     {
         return 0;
