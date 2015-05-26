@@ -29,6 +29,11 @@ class Table: public Filesys
 
 Table::Table(string diskname, string flatfile, string indexfile)
 {
+    fs = diskname;
+    flat_file = flatfile;
+    index_file = indexfile;
+    fs -> newfile(flat_file);
+    fs -> newfile(index_file);
     return 1;
 }
 
@@ -85,6 +90,7 @@ int Table::Search
 
 int Table::IndexSearch(string value)
 {
+    //root, value;
     return 1;
 }
 
