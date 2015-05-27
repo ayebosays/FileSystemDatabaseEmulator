@@ -27,16 +27,21 @@ using namespace std;
 
 int main()
 {
-    string filename = "disk";
+    string filename = "disk1";
     int blocksize = 128;
     int numberofblocks = 256;
-    string indexfile, flatfile;
+    string indexfile = "indx";
+    string flatfile = "fltfl";
     
+    //Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile);
 
-    Table TBL(filename, blocksize, numberofblocks,flatfile,indexfile);
-
+    Table TBL(filename, blocksize, numberofblocks,indexfile, flatfile);
     
-    TBL.Build_Table(filename);
+    string historyData = "data.txt";
+    
+    TBL.Build_Table(historyData);
+    
+    /*
     while(true)
     {
         cout << "Input date: ";
@@ -44,6 +49,7 @@ int main()
         cin >> date;
         TBL.Search(date);
     }
+     */
     
     /*
     string filename = "disk";

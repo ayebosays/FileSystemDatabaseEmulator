@@ -36,6 +36,7 @@ class Sdisk
     string getfilename() { return diskname; }                       // Returns the disk name.
     friend class Shell;
     friend class Filesys;
+    friend class Table;
     
     private :
     

@@ -17,14 +17,12 @@
 
 using namespace std;
 
-class Table
+class Table: public Filesys
 {
     public :
-        Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile);
+    Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile);
         int Build_Table(string input_file);
         int Search(string value);
-        Sdisk disk;
-        Filesys filesystem;
 
     private :
         string flatfile;
@@ -38,17 +36,12 @@ class Table
 
 //This constructor creates the table object. It creates the new (empty) files flatfile and indexfile in the file system on the Sdisk using diskname.
 
-Table::Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile)
+Table::Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile):Filesys(diskname,blocksize,numberofblocks)
 {
-    Sdisk disk(diskname, numberofblocks, blocksize);
-    this->filesystem = Filesys();
-    filesystem.start(Sdisk(diskname));
-    
     this->indexfile = indexfile;
     this->flatfile = flatfile;
-    filesystem.newfile(flatfile);
-    filesystem.newfile(indexfile);
-    
+    newfile(flatfile);
+    newfile(indexfile);
 }
 
 
@@ -56,12 +49,11 @@ Table::Table(string diskname,int blocksize,int numberofblocks, string flatfile, 
 
 int Table::Build_Table(string input_file)
 {
+
     vector<int> iblock;
     vector<string> ikey;
     ifstream infile;
     infile.open(input_file.c_str());
-    string rec;
-    getline(infile,rec);
     
     if (!infile.good())
     {
@@ -69,15 +61,23 @@ int Table::Build_Table(string input_file)
         return -1;
     }
     
+    string rec;
+    getline(infile,rec);
+
+    
     while (infile.good())
     {
+        cout << getblocksize() << endl;
+        
         string primkey = rec.substr(0,5); // Starting at position 0, 5 characters.
-        vector<string> blocks = filesystem.block(rec, disk.getblocksize());
-        int blockid = filesystem.addblock(flatfile, blocks[0]);
+        vector<string> blocks = block(rec, getblocksize());
+        int blockid = addblock(flatfile, blocks[0]);
         ikey.push_back(primkey);
         iblock.push_back(blockid);
         getline(infile,rec);
-        if(infile.bad() && ikey.size() > 0)
+        
+        
+        if((infile.bad() && ikey.size()) > 0 || ikey.size() == 12)
         {
             // write a block to the index file.
             ostringstream ibuffer;
@@ -86,8 +86,14 @@ int Table::Build_Table(string input_file)
                 ibuffer << ikey[i] << " " << iblock[i] << " ";
             }
             string buffer = ibuffer.str();
-            vector<string> blocks2 = filesystem.block(buffer, disk.getblocksize());
-            int error = filesystem.addblock(indexfile,blocks2[0]);
+            
+            vector<string> blocks2 = block(buffer, getblocksize());
+            int error = addblock(indexfile,blocks2[0]);
+            
+            if (error < 0)
+            {
+                cout << "There was an error." << endl;
+            }
             ikey.clear();
             iblock.clear();
         }
@@ -115,8 +121,7 @@ int Table::Search(string value)
         cout << "The record could not be found. " << endl;
         return -1;
     }
-    Filesys fs;
-    fs.getfirstblock(flatfile);
+    getfirstblock(flatfile);
     
     
     cout << "Record found: " << endl;

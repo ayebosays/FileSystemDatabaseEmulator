@@ -21,11 +21,11 @@ using namespace std;
 
 
 // Filesys Class
-class Filesys
+class Filesys: Sdisk
 {
 public:
     
-    Filesys(){};
+    Filesys(string diskname, int numberofblocks, int blocksize);
     void start(Sdisk);
     int fsclose();
     int newfile(string file);
@@ -54,11 +54,10 @@ public:
 };
 
 
-void Filesys::start(Sdisk sdisk)
+Filesys::Filesys(string diskname, int numberofblocks, int blocksize):Sdisk(diskname, numberofblocks, blocksize)
 {
-    this-> disk = sdisk;
-    rootsize = disk.getblocksize()/12;
-    fatsize = (disk.getnumberofblocks()*5) / (disk.getblocksize())+1;
+    rootsize = getblocksize()/12;
+    fatsize = (getnumberofblocks()*5) / (getblocksize())+1;
     
     
     for(int i=0; i<rootsize; i++)
@@ -67,7 +66,7 @@ void Filesys::start(Sdisk sdisk)
         firstblock.push_back(0);
     }
     
-    int k = disk.getnumberofblocks();
+    int k = getnumberofblocks();
     fat.push_back(fatsize + 2);
     
     for (int i = 0; i <= fatsize; i++)
@@ -107,6 +106,9 @@ int Filesys::newfile(string file)
         if (filename[i] == file)
         {
             cout << "File (" << file << ") already exists!" << endl;
+            
+            ifstream ifile(file.c_str());
+            ifile.close();
             return 1;
         }
     }
@@ -130,6 +132,8 @@ int Filesys::newfile(string file)
     fssync();
     cout << "Successfully added file: " << file << endl;
     return 1;
+    
+
 }
 
 

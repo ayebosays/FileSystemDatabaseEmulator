@@ -21,16 +21,10 @@
 
 using namespace std;
 
-class Shell
+class Shell: public Filesys
 {
 public:
-    Shell(string filename, int blocksize, int numberofblocks)
-    {
-        Sdisk disk(filename, numberofblocks, blocksize);
-        this-> filesys = Filesys();
-        filesys.start(Sdisk(filename));
-    };
-    Shell();
+    Shell(string filename, int blocksize, int numberofblocks);
     int dir();              // call ls which lists all files
     int add(string file);   // add a new file using input from the keyboard.
     int del(string file);   // deletes the file
@@ -38,13 +32,11 @@ public:
     int copy(string file1, string file2);//copies file1 to file2
     string filename;
     string file_name;
-    Sdisk disk;
-    Filesys filesys;
 };
 
 int Shell::dir()
 {
-    vector<string> flist = filesys.ls();
+    vector<string> flist = ls();
     for (int i = 0; i < flist.size(); i++)
     {
         cout << flist[i] << endl;
@@ -52,16 +44,15 @@ int Shell::dir()
     return 1;
 }
 
-Shell::Shell()
+Shell::Shell(string filename, int blocksize, int numberofblocks):Filesys(filename,blocksize,numberofblocks)
 {
-    
 }
 
 // read in data from keyboard. getline...endl. create file.
 // new file. getline. block it up with addblock.
 int Shell::add(string file)     // add a new file using input from the keyboard
 {
-    int err = filesys.newfile(file);
+    int err = newfile(file);
     
     if (err == -1)
     {
@@ -74,11 +65,11 @@ int Shell::add(string file)     // add a new file using input from the keyboard
     
     getline(cin,contains);
     
-    vector<string> blocks = filesys.block(contains, 128);
+    vector<string> blocks = block(contains, 128);
     
     for(int i =0; i < blocks.size(); i++)
     {
-        blocknumber = filesys.addblock(file, blocks[i]);
+        blocknumber = addblock(file, blocks[i]);
     }
     
     return 1;
@@ -89,13 +80,13 @@ int Shell::add(string file)     // add a new file using input from the keyboard
 int Shell::del(string file)    // deletes the file
 {
     
-    int currentblock = filesys.getfirstblock(file);
+    int currentblock = getfirstblock(file);
     while (currentblock > 0)
     {
-        filesys.delblock(file, currentblock);
-        currentblock = filesys.getfirstblock(file);
+        delblock(file, currentblock);
+        currentblock = getfirstblock(file);
     }
-    filesys.rmfile(file);
+    rmfile(file);
     
     return 1;
 }
@@ -103,12 +94,12 @@ int Shell::del(string file)    // deletes the file
 // cat function from before the midterm.
 int Shell::type(string file)   //lists the contents of file
 {
-    int currentblock = filesys.getfirstblock(file);
+    int currentblock = getfirstblock(file);
     while(currentblock > 0)
     {
         string buffer;
-        filesys.readblock(file, currentblock, buffer);
-        currentblock = filesys.nextblock(file, currentblock);
+        readblock(file, currentblock, buffer);
+        currentblock = nextblock(file, currentblock);
         
         if(currentblock == 0)
         {
@@ -128,8 +119,8 @@ int Shell::type(string file)   //lists the contents of file
 int Shell::copy(string file1, string file2) //copies file1 to file2
 {
     del(file2); // clears out file2.
-    filesys.newfile(file2);
-    int currentblock = filesys.getfirstblock(file1);
+    newfile(file2);
+    int currentblock = getfirstblock(file1);
     if (currentblock == -1)
     {
         return 0;
@@ -138,9 +129,9 @@ int Shell::copy(string file1, string file2) //copies file1 to file2
     while(currentblock > 0)
     {
         string buffer;
-        filesys.readblock(file1, currentblock, buffer);
-        filesys.addblock(file2, buffer);
-        currentblock = filesys.nextblock(file1, currentblock);
+        readblock(file1, currentblock, buffer);
+        addblock(file2, buffer);
+        currentblock = nextblock(file1, currentblock);
     }
     return 1;
 }
