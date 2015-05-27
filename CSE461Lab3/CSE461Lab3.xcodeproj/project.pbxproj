@@ -27,6 +27,7 @@
 		43347F621AE70EDF00BC11D1 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		438526491AF4058700B8AF85 /* Sdisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Sdisk.h; sourceTree = "<group>"; };
 		4385264A1AF4078800B8AF85 /* Filesys.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Filesys.h; sourceTree = "<group>"; };
+		43E7DB991B15196F000E16A4 /* Table.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Table.h; sourceTree = "<group>"; };
 		43FE83091B02B7990081ED25 /* Shell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Shell.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -60,6 +61,7 @@
 		43347F611AE70EDF00BC11D1 /* CSE461Lab3 */ = {
 			isa = PBXGroup;
 			children = (
+				43E7DB991B15196F000E16A4 /* Table.h */,
 				43347F621AE70EDF00BC11D1 /* main.cpp */,
 				43FE83091B02B7990081ED25 /* Shell.h */,
 				4385264A1AF4078800B8AF85 /* Filesys.h */,

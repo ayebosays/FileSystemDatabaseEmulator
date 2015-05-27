@@ -38,7 +38,6 @@ public:
     int nextblock(string file, int blocknumber);
     bool checkblock(string file, int blocknumber);
     vector<string> block(string buffer, int b);
-    Sdisk disk;
     vector<string> ls();
     friend class Shell;
     friend class Table;
@@ -238,7 +237,7 @@ int Filesys::addblock(string file, string block)
         fat[allocate] = 0;
     }
     fssync(); //sync the root and fat.
-    disk.putblock(allocate, block);
+    putblock(allocate, block);
     return allocate;
 }
 
@@ -281,7 +280,7 @@ int Filesys::delblock(string file, int blocknumber)
 //
 int Filesys::readblock(string file, int blocknumber, string& buffer)
 {
-    disk.getblock(blocknumber,buffer);
+    getblock(blocknumber,buffer);
     return 1;
 }
 
@@ -290,7 +289,7 @@ int Filesys::readblock(string file, int blocknumber, string& buffer)
 
 int Filesys::writeblock(string file, int blocknumber, string buffer)
 {
-    disk.putblock(blocknumber,buffer);
+    putblock(blocknumber,buffer);
     return 1;
 }
 
@@ -350,7 +349,7 @@ int Filesys::fssync()
     ostringstream fatstream;
     string fatbuffer;
     
-    for(int i = 0; i < disk.getnumberofblocks(); i++)
+    for(int i = 0; i < getnumberofblocks(); i++)
     {
         fatstream << fat[i]<< " ";
         fatbuffer = fatstream.str();
@@ -361,7 +360,7 @@ int Filesys::fssync()
     for (int i=0; i < blockbuff.size(); i++)
     {
         
-        disk.putblock(2 + i, blockbuff[i]);
+        putblock(2 + i, blockbuff[i]);
     }
     
     // Root
@@ -376,7 +375,7 @@ int Filesys::fssync()
         rootstream << filename[i] << " " << firstblock[i] << " ";
         buffer = rootstream.str();
     }
-    disk.putblock(1, buffer);
+    putblock(1, buffer);
     return 0;
 }
 
