@@ -67,15 +67,12 @@ int Table::Build_Table(string input_file)
     
     while (infile.good())
     {
-        cout << getblocksize() << endl;
-        
         string primkey = rec.substr(0,5); // Starting at position 0, 5 characters.
         vector<string> blocks = block(rec, getblocksize());
         int blockid = addblock(flatfile, blocks[0]);
         ikey.push_back(primkey);
         iblock.push_back(blockid);
         getline(infile,rec);
-        
         
         if((infile.bad() && ikey.size()) > 0 || ikey.size() == 12)
         {

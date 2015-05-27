@@ -33,8 +33,7 @@ int main()
     string indexfile = "indx";
     string flatfile = "fltfl";
     
-    //Table(string diskname,int blocksize,int numberofblocks, string flatfile, string indexfile);
-    Table TBL(filename, blocksize, numberofblocks,flatfile, indexfile);
+    Table TBL(filename, numberofblocks, blocksize,flatfile, indexfile);
     
     string historyData = "data.txt";
     
