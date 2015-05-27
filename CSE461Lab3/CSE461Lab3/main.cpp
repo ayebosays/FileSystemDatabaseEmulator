@@ -39,7 +39,7 @@ int main()
     
     TBL.Build_Table(historyData);
     
-    /*
+    
     while(true)
     {
         cout << "Input date: ";
@@ -47,7 +47,7 @@ int main()
         cin >> date;
         TBL.Search(date);
     }
-     */
+     
     
     /*
     string filename = "disk";
