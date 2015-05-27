@@ -306,10 +306,6 @@ int Filesys::nextblock(string file, int blocknumber)
     return fat[blockid];
 }
 
-
-
-
-
 vector<string> Filesys::block(string buffer, int b)
 {
     // blocks the buffer into a list of blocks of size b
@@ -360,7 +356,7 @@ int Filesys::fssync()
         fatbuffer = fatstream.str();
     }
     
-    vector <string> blockbuff = block(fatbuffer, disk.getblocksize());
+    vector <string> blockbuff = block(fatbuffer, getblocksize());
     
     for (int i=0; i < blockbuff.size(); i++)
     {
