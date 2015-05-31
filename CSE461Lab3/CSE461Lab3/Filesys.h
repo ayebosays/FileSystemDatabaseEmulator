@@ -37,6 +37,7 @@ public:
     int writeblock(string file, int blocknumber, string buffer);
     int nextblock(string file, int blocknumber);
     bool checkblock(string file, int blocknumber);
+    int getblock(string file, int blocknumber,string &buffer);
     vector<string> block(string buffer, int b);
     vector<string> ls();
     friend class Shell;
@@ -280,7 +281,7 @@ int Filesys::delblock(string file, int blocknumber)
 //
 int Filesys::readblock(string file, int blocknumber, string& buffer)
 {
-    getblock(blocknumber,buffer);
+    Sdisk::getblock(blocknumber,buffer);
     return 1;
 }
 
@@ -402,6 +403,13 @@ bool Filesys::checkblock(string file, int blocknumber)
         }
     }
     return true;
+}
+
+
+int Filesys::getblock(string file, int blocknumber,string &buffer)
+{
+    Sdisk::getblock(blocknumber, buffer);
+    return 1;
 }
 
 

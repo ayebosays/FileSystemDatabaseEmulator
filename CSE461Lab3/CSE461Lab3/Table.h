@@ -85,6 +85,7 @@ int Table::Build_Table(string input_file)
             string buffer = ibuffer.str();
             
             vector<string> blocks2 = block(buffer, getblocksize());
+            
             int error = addblock(indexfile,blocks2[0]);
             
             if (error < 0)
@@ -96,10 +97,6 @@ int Table::Build_Table(string input_file)
         }
     }
     
-    
-    
-   
-    
     return 1;
 }
         
@@ -109,36 +106,80 @@ int Table::Build_Table(string input_file)
 
 int Table::Search(string value)
 {
-    string buffer, date, end, place, type, ref, desc;
-    vector <string> record;
     
-    int block_number = IndexSearch(value), lastPos, pos;
+    string buffer, date, end, place, type, ref, desc;
+    vector <string> rec;
+    
+    
+    int block_number = IndexSearch(value);
+    
     if(block_number == -1)
     {
         cout << "The record could not be found. " << endl;
         return -1;
     }
-    getfirstblock(flatfile);
+    //int blockresult = getblock(flatfile,block_number,buffer);
     
+    cout << buffer << endl;
+    
+    
+    /*
+    lastPos = buffer.find_first_not_of("*",0);
+    pos = buffer.find_first_of("*", lastPos);
+    
+    while (pos != string::npos || lastPos != string::npos)
+    {
+        rec.push_back( buffer.substr(lastPos, pos-lastPos));
+        lastPos = buffer.find_first_not_of("*", pos);
+        pos = buffer.find_first_of("*", lastPos);
+    }
+     */
     
     cout << "Record found: " << endl;
-    cout << "Date: " << record.at(0) << endl;
-    cout << "End: " << record.at(1) << endl;
-    cout << "Type: " << record.at(2) << endl;
-    cout << "Place: " << record.at(3) << endl;
-    cout << "Reference: " << record.at(4) << endl;
-    cout << "Description: " << record.at(5) << endl;
+    cout << "Date: " << rec.at(0) << endl;
+    cout << "End: " << rec.at(1) << endl;
+    cout << "Type: " << rec.at(2) << endl;
+    cout << "Place: " << rec.at(3) << endl;
+    cout << "Reference: " << rec.at(4) << endl;
+    cout << "Description: " << rec.at(5) << endl;
     
     return 1;
 }
 
 //This module accepts a key value, and searches the index file indexfile for the record where the date matches the specified value. IndexSearch then returns the block number key of the index record where the match occurs.
-
         
 int Table::IndexSearch(string value)
 {
     //root, value;
-    return 1;
+    
+    int current_block = getfirstblock(indexfile);
+    cout << "current block: " << current_block << endl;
+    
+    string block, date;
+    stringstream ss;
+    int blk_num = current_block;
+    
+    while( current_block != 0)
+    {
+        getfirstblock(indexfile);
+        ss.str(block);
+        ss >> date >> blk_num;
+        
+        if(date == value)
+        {
+            cout << "blk_num " << blk_num << endl;
+            return blk_num;
+        }
+        else
+            cout << "Did not find the block" << endl;
+        
+        current_block = nextblock(indexfile, current_block);
+    }
+    
+    cout << "current block after while loop: " << current_block << endl;
+
+    return -1;
+    //return current_block;
 }
 
 
