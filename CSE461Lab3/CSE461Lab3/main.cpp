@@ -27,17 +27,8 @@ using namespace std;
 
 int main()
 {
-    string filename = "disk1";
-    int blocksize = 128;
-    int numberofblocks = 256;
-    string indexfile = "indx";
-    string flatfile = "fltfl";
-    
-    Table TBL(filename, numberofblocks, blocksize,flatfile, indexfile);
-    
-    string historyData = "data.txt";
-    
-    TBL.Build_Table(historyData);
+    Table TBL("disk1", 256, 128,"fltfile","indx");
+    TBL.Build_Table("data.txt");
     
     
     while(true)
