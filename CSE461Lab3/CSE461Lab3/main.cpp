@@ -27,7 +27,7 @@ using namespace std;
 
 int main()
 {
-    Table TBL("disk1", 256, 128,"fltfile","indx");
+    Table TBL("disk1", 256, 128,"flatfile","indexfile");
     TBL.Build_Table("data.txt");
     
     

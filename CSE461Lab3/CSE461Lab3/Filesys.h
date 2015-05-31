@@ -173,6 +173,7 @@ int Filesys::getfirstblock(string file)
 {
     bool found = false;
     int first_block = 0;
+    
     for (int i = 0; i < filename.size(); i++)
     {
         if (filename[i] == file)
