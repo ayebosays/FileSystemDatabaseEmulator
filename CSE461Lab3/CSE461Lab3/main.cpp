@@ -33,10 +33,11 @@ int main()
     
     while(true)
     {
-        cout << "Input date: ";
-        string date;
-        cin >> date;
-        TBL.Search(date);
+        cout << "Input the date you wish to search for: ";
+        string x;
+        cin >> x;
+        TBL.Search(x);
+        TBL.fsclose();
     }
      
     

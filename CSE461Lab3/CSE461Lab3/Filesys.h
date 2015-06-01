@@ -202,11 +202,19 @@ int Filesys::addblock(string file, string block)
     int id = getfirstblock(file);
     int allocate = fat[0];
     bool check = false;
+    
     if (allocate == 0)
     {
         cout << "No space available" << endl;
         return -1;
     }
+    
+    if (allocate == 0)
+    {
+        cout << "Disk is full" << endl;
+        return -1;
+    }
+    
     if (id == 0)
     {
         for (int i = 0; i < filename.size(); i++)
@@ -223,13 +231,14 @@ int Filesys::addblock(string file, string block)
         }
         if (!check)
         {
-            cout << "file is empty";
+            cout << "addBlock(): The file wasn't found." << endl;
             return -2;
         }
     }
     else
     {
         int nextblock = id;
+        
         while (fat[nextblock] != 0)
         {
             nextblock = fat[nextblock];
@@ -238,8 +247,9 @@ int Filesys::addblock(string file, string block)
         fat[0] = fat[allocate];
         fat[allocate] = 0;
     }
-    fssync(); //sync the root and fat.
+    
     putblock(allocate, block);
+    fssync(); //sync the root and fat.
     return allocate;
 }
 
