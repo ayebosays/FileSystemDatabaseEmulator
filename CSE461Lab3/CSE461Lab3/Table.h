@@ -50,7 +50,7 @@ Table::Table(string diskname,int numberofblocks,int blocksize, string flatfile, 
 int Table::Build_Table(string input_file)
 {
     string block, record, date;
-    int x;
+    unsigned long x;
     vector<string> blocks;
     stringstream ss;
     ifstream file(input_file.c_str());
@@ -152,7 +152,7 @@ int Table::Search(string value)
     vector <string> rec;
     
     
-    int block_number = IndexSearch(value), lastPos, pos;
+    signed long block_number = IndexSearch(value), lastPos, pos;
     
     if(block_number == -1)
     {
@@ -192,11 +192,11 @@ int Table::IndexSearch(string value)
     
     int current_block = getfirstblock(indexfile), blk_num;
     
-    string block, date;
-    stringstream ss;
-    
+
     while( current_block != 0)
     {
+        string block, date;
+        stringstream ss;
         getblock(indexfile, current_block, block);
         ss.str(block);
         ss >> date >> blk_num;
