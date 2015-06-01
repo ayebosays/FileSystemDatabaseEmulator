@@ -84,61 +84,7 @@ int Table::Build_Table(string input_file)
         getline(file, record);
     }
     return 1;
-    
-    
-    
-    
-    /*
-    vector<int> iblock;
-    vector<string> ikey;
-    ifstream infile;
-    infile.open(input_file.c_str());
-    
-    if (!infile.good())
-    {
-        cout << "Was not able to build the table" << endl;
-        return -1;
-    }
-    
-    string rec;
-    getline(infile,rec);
-
-    
-    while (infile.good())
-    {
-        string primkey = rec.substr(0,5); // Starting at position 0, 5 characters.
-        vector<string> blocks = block(rec, getblocksize());
-        int blockid = addblock(flatfile, blocks[0]);
-        ikey.push_back(primkey);
-        iblock.push_back(blockid);
-        getline(infile,rec);
-        
-        if((infile.bad() && ikey.size()) > 0 || ikey.size() == 12)
-        {
-            // write a block to the index file.
-            ostringstream ibuffer;
-            for(int i = 0; i < ikey.size(); i++)
-            {
-                ibuffer << ikey[i] << " " << iblock[i] << " ";
-            }
-            string buffer = ibuffer.str();
-            
-            vector<string> blocks2 = block(buffer, getblocksize());
-            
-            int error = addblock(indexfile,blocks2[0]);
-            
-            if (error < 0)
-            {
-                cout << "There was an error." << endl;
-            }
-            ikey.clear();
-            iblock.clear();
-        }
-    }
-    
-    return 1;
-     
-     */
+  
 }
         
         
@@ -159,7 +105,6 @@ int Table::Search(string value)
         cout << "The record could not be found. " << endl;
         return -1;
     }
-    
     getblock(flatfile,block_number,buffer);
     
     lastPos = buffer.find_first_not_of("*",0);
@@ -171,7 +116,6 @@ int Table::Search(string value)
         lastPos = buffer.find_first_not_of("*", pos);
         pos = buffer.find_first_of("*", lastPos);
     }
-     
     
     cout << "Record found: " << endl;
     cout << "Date: " << rec.at(0) << endl;
